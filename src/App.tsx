@@ -600,32 +600,32 @@ export default function App() {
       // Sheet 2: Kesimpulan - DENGAN ISIAN A1-D2 YANG SUDAH DITAMBAHKAN
       const ws2Data: (string | number | { f: string; t: 'n' | 's' })[][] = [
         // Baris 1: Header utama
-        ["Poin", { f: '="Keterangan (BIT + "&E2*100&"% dan NDT Tetap)"', t: 's' }, "Nilai", "Keterangan", "Skenario Kenaikan BIT"],
+        ['Poin', { f: '="Keterangan (BIT + "&E2*100&"% dan NDT Tetap)"', t: 's' }, 'Nilai', 'Keterangan', 'Skenario Kenaikan BIT'],
         // Baris 2: Data Simulasi Penerimaan PBB 2026
-        ["Simulasi Penerimaan PBB 2026", "Perkebunan", { f: "SUMIF('1. Hasil'!C2:C10000,\"Perkebunan\",'1. Hasil'!AY2:AY10000)", t: 'n' }, "", 0.103],
-        ["Simulasi Penerimaan PBB 2026", "Minerba", { f: "SUMIF('1. Hasil'!C2:C10000,\"Minerba\",'1. Hasil'!AY2:AY10000)", t: 'n' }, "", ""],
-        ["Simulasi Penerimaan PBB 2026", "Perhutanan (HTI)", { f: "SUMIF('1. Hasil'!C2:C10000,\"Perhutanan (HTI)\",'1. Hasil'!AY2:AY10000)", t: 'n' }, "", ""],
-        ["Simulasi Penerimaan PBB 2026", "Perhutanan (Hutan Alam)", { f: "SUMIF('1. Hasil'!C2:C10000,\"Perhutanan (Hutan Alam)\",'1. Hasil'!AY2:AY10000)", t: 'n' }, "", ""],
-        ["Simulasi Penerimaan PBB 2026", "Sektor Lainnya", { f: "SUMIF('1. Hasil'!C2:C10000,\"Sektor Lainnya\",'1. Hasil'!AY2:AY10000)", t: 'n' }, "", ""],
-        ["Simulasi Penerimaan PBB 2026 (Collection Rate 100%)", { f: "=(COUNT('1. Hasil'!A2:A10000))&\" NOP\"", t: 's' }, { f: "SUM(C2:C6)", t: 'n' }, "", ""],
-        ["Target Penerimaan PBB 2026", "", 110289165592, "", ""],
-        ["Selisih antara Simulasi (Collection Rate 100%) & Target", "", { f: "C7-C8", t: 'n' }, { f: 'IF(C9>0,"Tercapai","Tidak Tercapai")', t: 's' }, ""],
-        [{ f: '="Simulasi Penerimaan PBB 2026 (Collection Rate "&B10*100&"%)"', t: 's' }, "95%", { f: "C7*B10", t: 'n' }, "", ""],
-        [{ f: '="Selisih antara Simulasi (Collection Rate "&B10*100&"%)"&" Target"', t: 's' }, "", { f: "C10-C8", t: 'n' }, { f: 'IF(C11>0,"Tercapai","Tidak Tercapai")', t: 's' }, ""],
+        ['Simulasi Penerimaan PBB 2026', 'Perkebunan', { f: "SUMIF('1. Hasil'!C2:C10000,\"Perkebunan\",'1. Hasil'!AY2:AY10000)", t: 'n' }, '', 0.103],
+        ['Simulasi Penerimaan PBB 2026', 'Minerba', { f: "SUMIF('1. Hasil'!C2:C10000,\"Minerba\",'1. Hasil'!AY2:AY10000)", t: 'n' }, '', ''],
+        ['Simulasi Penerimaan PBB 2026', 'Perhutanan (HTI)', { f: "SUMIF('1. Hasil'!C2:C10000,\"Perhutanan (HTI)\",'1. Hasil'!AY2:AY10000)", t: 'n' }, '', ''],
+        ['Simulasi Penerimaan PBB 2026', 'Perhutanan (Hutan Alam)', { f: "SUMIF('1. Hasil'!C2:C10000,\"Perhutanan (Hutan Alam)\",'1. Hasil'!AY2:AY10000)", t: 'n' }, '', ''],
+        ['Simulasi Penerimaan PBB 2026', 'Sektor Lainnya', { f: "SUMIF('1. Hasil'!C2:C10000,\"Sektor Lainnya\",'1. Hasil'!AY2:AY10000)", t: 'n' }, '', ''],
+        ['Simulasi Penerimaan PBB 2026 (Collection Rate 100%)', { f: '=(COUNT('1. Hasil'!A2:A10000))&\" NOP\"', t: 's' }, { f: 'SUM(C2:C6)', t: 'n' }, '', ''],
+        ['Target Penerimaan PBB 2026', '', 110289165592, '', ''],
+        ['Selisih antara Simulasi (Collection Rate 100%) & Target', '', { f: 'C7-C8', t: 'n' }, { f: 'IF(C9>0,"Tercapai","Tidak Tercapai")', t: 's' }, ''],
+        [{ f: '="Simulasi Penerimaan PBB 2026 (Collection Rate "&B10*100&"%)"', t: 's' }, '95%', { f: 'C7*B10', t: 'n' }, '', ''],
+        [{ f: '="Selisih antara Simulasi (Collection Rate "&B10*100&"%)"&" Target"', t: 's' }, '', { f: 'C10-C8', t: 'n' }, { f: 'IF(C11>0,"Tercapai","Tidak Tercapai")', t: 's' }, ''],
         // Baris kosong
-        ["", "", "", "", ""],
+        ['', '', '', '', ''],
         // Row 13: Second section header
-        ["Poin", { f: '="Keterangan (BIT + "&E2*100&"% dan NDT + "&E14*100&"%)"', t: 's' }, "Nilai", "Keterangan", "Skenario Kenaikan NDT"],
+        ["Poin", { f: '="Keterangan (BIT + "&E2*100&"% dan NDT + "&E14*100&"%)"', t: 's' }, 'Nilai', 'Keterangan', 'Skenario Kenaikan NDT'],
         // Row 14: Second section data starts
-        ["Simulasi Penerimaan PBB 2026", "Perkebunan", { f: "SUMIF('1. Hasil'!C2:C10000,\"Perkebunan\",'1. Hasil'!BC2:BC10000)", t: 'n' }, "", 0.46],
-        ["Simulasi Penerimaan PBB 2026", "Minerba", { f: "SUMIF('1. Hasil'!C2:C10000,\"Minerba\",'1. Hasil'!BC2:BC10000)", t: 'n' }, "", ""],
-        ["Simulasi Penerimaan PBB 2026", "Perhutanan (HTI)", { f: "SUMIF('1. Hasil'!C2:C10000,\"Perhutanan (HTI)\",'1. Hasil'!BC2:BC10000)", t: 'n' }, "", ""],
-        ["Simulasi Penerimaan PBB 2026", "Perhutanan (Hutan Alam)", { f: "SUMIF('1. Hasil'!C2:C10000,\"Perhutanan (Hutan Alam)\",'1. Hasil'!BC2:BC10000)", t: 'n' }, "", ""],
-        ["Simulasi Penerimaan PBB 2026", "Sektor Lainnya", { f: "SUMIF('1. Hasil'!C2:C10000,\"Sektor Lainnya\",'1. Hasil'!BC2:BC10000)", t: 'n' }, "", ""],
-        ["Simulasi Penerimaan PBB 2026 (Collection Rate 100%)", { f: "=(COUNT('1. Hasil'!A2:A10000))&\" NOP\"", t: 's' }, { f: "SUM(C14:C18)", t: 'n' }, "", ""],
-        ["Selisih antara Simulasi (Collection Rate 100%) & Target", "", { f: "C19-C20", t: 'n' }, { f: 'IF(C21>0,"Tercapai","Tidak Tercapai")', t: 's' }, ""],
-        [{ f: '="Simulasi Penerimaan PBB 2026 (Collection Rate "&B22*100&"%)"', t: 's' }, "95%", { f: "C19*B22", t: 'n' }, "", ""],
-        [{ f: '="Selisih antara Simulasi (Collection Rate "&B22*100&"%)"&" Target"', t: 's' }, "", { f: "C22-C20", t: 'n' }, { f: 'IF(C23>0,"Tercapai","Tidak Tercapai")', t: 's' }, ""],
+        ['Simulasi Penerimaan PBB 2026', 'Perkebunan', { f: 'SUMIF('1. Hasil'!C2:C10000,\"Perkebunan\",'1. Hasil'!BC2:BC10000)', t: 'n' }, '', 0.46],
+        ['Simulasi Penerimaan PBB 2026', 'Minerba', { f: 'SUMIF('1. Hasil'!C2:C10000,\"Minerba\",'1. Hasil'!BC2:BC10000)', t: 'n' }, '', ''],
+        ['Simulasi Penerimaan PBB 2026', 'Perhutanan (HTI)', { f: 'SUMIF('1. Hasil'!C2:C10000,\"Perhutanan (HTI)\",'1. Hasil'!BC2:BC10000)', t: 'n' }, '', ''],
+        ['Simulasi Penerimaan PBB 2026', 'Perhutanan (Hutan Alam)', { f: 'SUMIF('1. Hasil'!C2:C10000,\"Perhutanan (Hutan Alam)\",'1. Hasil'!BC2:BC10000)', t: 'n' }, '', ''],
+        ['Simulasi Penerimaan PBB 2026', 'Sektor Lainnya', { f: 'SUMIF('1. Hasil'!C2:C10000,\"Sektor Lainnya\",'1. Hasil'!BC2:BC10000)', t: 'n' }, '', ''],
+        ['Simulasi Penerimaan PBB 2026 (Collection Rate 100%)', { f: '=(COUNT('1. Hasil'!A2:A10000))&\" NOP\"', t: 's' }, { f: "SUM(C14:C18)', t: 'n' }, '', ''],
+        ['Selisih antara Simulasi (Collection Rate 100%) & Target', '', { f: 'C19-C20", t: 'n' }, { f: 'IF(C21>0,"Tercapai","Tidak Tercapai")', t: 's' }, ''],
+        [{ f: '="Simulasi Penerimaan PBB 2026 (Collection Rate "&B22*100&"%)"', t: 's' }, '95%', { f: 'C19*B22', t: 'n' }, '', ''],
+        [{ f: '="Selisih antara Simulasi (Collection Rate "&B22*100&"%)"&" Target"', t: 's' }, '', { f: 'C22-C20', t: 'n' }, { f: 'IF(C23>0,"Tercapai","Tidak Tercapai")', t: 's' }, ''],
       ];      
       const ws2 = XLSX.utils.aoa_to_sheet(ws2Data);
       
