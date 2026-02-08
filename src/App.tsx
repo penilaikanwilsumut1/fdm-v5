@@ -92,9 +92,16 @@ interface UploadedFile {
   extractedData?: Record<string, number | string>;
 }
 
+// Tipe untuk cell value - bisa number, string, atau rumus Excel
+interface FormulaCell {
+  f: string;
+}
+
+type CellValue = number | string | null | FormulaCell;
+
 interface ExtractionResult {
   headers: string[];
-  rows: (number | string | null)[][];
+  rows: CellValue[][];
 }
 
 // Fungsi untuk mengkonversi indeks kolom ke huruf kolom Excel (0 = A, 1 = B, dst)
@@ -337,140 +344,121 @@ export default function App() {
     });
   };
 
-  // Hitung rumus-rumus
-  const calculateFormulas = (rows: (number | string | null)[][]): (number | string | null)[][] => {
-    const headers = ["NO", ...itemsDefinitions.map(item => item.label)];
+  // Hitung rumus-rumus - mengembalikan array dengan rumus Excel, bukan nilai hasil
+  const calculateFormulas = (rowCount: number): Record<number, Record<string, string>> => {
+    // Mapping kolom berdasarkan definisi itemsDefinitions
+    // Indeks: 0=NO, 1=KPP, 2=Sektor, dst
     const colMap: Record<string, number> = {};
+    const headers = ["NO", ...itemsDefinitions.map(item => item.label)];
     headers.forEach((h, i) => { colMap[h] = i; });
 
-    return rows.map((row) => {
-      const newRow = [...row];
+    const formulasByRow: Record<number, Record<string, string>> = {};
 
-      // Helper untuk mendapatkan nilai kolom
-      const getVal = (label: string): number => {
-        const val = newRow[colMap[label]];
-        return typeof val === 'number' ? val : 0;
-      };
+    for (let rowIdx = 0; rowIdx < rowCount; rowIdx++) {
+      const excelRow = rowIdx + 2; // Baris Excel dimulai dari 2 (setelah header)
+      const rowFormulas: Record<string, string> = {};
 
-      // LUAS BUMI = SUM(Areal Produktif, Areal Belum Diolah, Areal Sudah Diolah Belum Ditanami, Areal Pembibitan, Areal Tidak Produktif, Areal Pengaman, Areal Emplasemen)
-      const arealCols = ["Areal Produktif", "Areal Belum Diolah", "Areal Sudah Diolah Belum Ditanami", "Areal Pembibitan", "Areal Tidak Produktif", "Areal Pengaman", "Areal Emplasemen"];
-      newRow[colMap["LUAS BUMI"]] = arealCols.reduce((sum, col) => sum + getVal(col), 0);
+      // Helper untuk mendapatkan huruf kolom
+      const col = (label: string): string => getColumnLetter(colMap[label]);
 
-      // Areal Produktif (Copy)
-      newRow[colMap["Areal Produktif (Copy)"]] = getVal("Areal Produktif");
+      // 1. LUAS BUMI (kolom J) = SUM(K:Q) - Areal Produktif sampai Areal Emplasemen
+      // K = Areal Produktif, L = Areal Belum Diolah, M = Areal Sudah Diolah Belum Ditanami
+      // N = Areal Pembibitan, O = Areal Tidak Produktif, P = Areal Pengaman, Q = Areal Emplasemen
+      rowFormulas["LUAS BUMI"] = `=SUM(${col("Areal Produktif")}${excelRow}:${col("Areal Emplasemen")}${excelRow})`;
 
-      // NJOP Bumi Berupa Tanah (Rp) = Areal Produktif * NJOP/M Areal Belum Produktif
-      newRow[colMap["NJOP Bumi Berupa Tanah (Rp)"]] = getVal("Areal Produktif") * getVal("NJOP/M Areal Belum Produktif");
+      // 2. Areal Produktif (Copy) (kolom R) = K (Areal Produktif)
+      rowFormulas["Areal Produktif (Copy)"] = `=${col("Areal Produktif")}${excelRow}`;
 
-      // NJOP Bumi Berupa Pengembangan Tanah (Rp) (Kenaikan BIT 10.3%) = NJOP Bumi Berupa Pengembangan Tanah (Rp) * 1.103
-      const njopPengembangan = getVal("NJOP Bumi Berupa Pengembangan Tanah (Rp)");
-      newRow[colMap["NJOP Bumi Berupa Pengembangan Tanah (Rp) (Kenaikan BIT 10.3%)"]] = njopPengembangan * 1.103;
+      // 3. NJOP Bumi Berupa Tanah (Rp) (kolom T) = K * S (Areal Produktif * NJOP/M Areal Belum Produktif)
+      rowFormulas["NJOP Bumi Berupa Tanah (Rp)"] = `=${col("Areal Produktif")}${excelRow}*${col("NJOP/M Areal Belum Produktif")}${excelRow}`;
 
-      // NJOP Bumi Areal Produktif (Rp) = NJOP Bumi Berupa Tanah (Rp) + NJOP Bumi Berupa Pengembangan Tanah (Rp)
-      newRow[colMap["NJOP Bumi Areal Produktif (Rp)"]] = getVal("NJOP Bumi Berupa Tanah (Rp)") + getVal("NJOP Bumi Berupa Pengembangan Tanah (Rp)");
+      // 4. NJOP Bumi Areal Produktif (Rp) (kolom W) = T + U (NJOP Tanah + NJOP Pengembangan)
+      rowFormulas["NJOP Bumi Areal Produktif (Rp)"] = `=${col("NJOP Bumi Berupa Tanah (Rp)")}${excelRow}+${col("NJOP Bumi Berupa Pengembangan Tanah (Rp)")}${excelRow}`;
 
-      // Luas Bumi Areal Produktif (m²) = Areal Produktif
-      newRow[colMap["Luas Bumi Areal Produktif (m²)"]] = getVal("Areal Produktif");
+      // 5. Luas Bumi Areal Produktif (m²) (kolom X) = K (Areal Produktif)
+      rowFormulas["Luas Bumi Areal Produktif (m²)"] = `=${col("Areal Produktif")}${excelRow}`;
 
-      // NJOP Bumi Per M2 Areal Produktif (Rp/m2) = NJOP Bumi Areal Produktif (Rp) / Luas Bumi Areal Produktif (m²)
-      const luasProd = getVal("Luas Bumi Areal Produktif (m²)");
-      const njopTotalProd = getVal("NJOP Bumi Areal Produktif (Rp)");
-      newRow[colMap["NJOP Bumi Per M2 Areal Produktif (Rp/m2)"]] = luasProd > 0 ? Math.round(njopTotalProd / luasProd) : 0;
+      // 6. NJOP Bumi Per M2 Areal Produktif (Rp/m2) (kolom Y) = W / X
+      rowFormulas["NJOP Bumi Per M2 Areal Produktif (Rp/m2)"] = `=${col("NJOP Bumi Areal Produktif (Rp)")}${excelRow}/${col("Luas Bumi Areal Produktif (m²)")}${excelRow}`;
 
-      // NJOP BUMI (Rp) AREA PRODUKTIF pada A. DATA BUMI = Luas Bumi Areal Produktif (m²) * NJOP Bumi Per M2 Areal Produktif (Rp/m2)
-      newRow[colMap["NJOP BUMI (Rp) AREA PRODUKTIF pada A. DATA BUMI"]] = getVal("Luas Bumi Areal Produktif (m²)") * getVal("NJOP Bumi Per M2 Areal Produktif (Rp/m2)");
+      // 7. NJOP BUMI (Rp) AREA PRODUKTIF pada A. DATA BUMI (kolom Z) = X * Y
+      rowFormulas["NJOP BUMI (Rp) AREA PRODUKTIF pada A. DATA BUMI"] = `=${col("Luas Bumi Areal Produktif (m²)")}${excelRow}*${col("NJOP Bumi Per M2 Areal Produktif (Rp/m2)")}${excelRow}`;
 
-      // NJOP BUMI (Rp) AREA PRODUKTIF pada A. DATA BUMI (Proyeksi NDT Naik 46%) = ROUND((NJOP Bumi Berupa Tanah (Rp) + NJOP Bumi Berupa Pengembangan Tanah (Rp) (Kenaikan BIT 10.3%)) / Areal Produktif) * Luas Bumi Areal Produktif (m²)
-      const tanah = getVal("NJOP Bumi Berupa Tanah (Rp)");
-      const bitNaik = getVal("NJOP Bumi Berupa Pengembangan Tanah (Rp) (Kenaikan BIT 10.3%)");
-      const arealProd = getVal("Areal Produktif");
-      newRow[colMap["NJOP BUMI (Rp) AREA PRODUKTIF pada A. DATA BUMI (Proyeksi NDT Naik 46%)"]] = arealProd > 0 ? Math.round((tanah + bitNaik) / arealProd) * getVal("Luas Bumi Areal Produktif (m²)") : 0;
+      // 8. Areal Tidak Produktif (Copy) (kolom AD) = O (Areal Tidak Produktif)
+      rowFormulas["Areal Tidak Produktif (Copy)"] = `=${col("Areal Tidak Produktif")}${excelRow}`;
 
-      // NJOP BUMI (Rp) AREAL BELUM PRODUKTIF pada A. DATA BUMI (Proyeksi NDT Naik 46%) = NJOP BUMI (Rp) AREAL BELUM PRODUKTIF pada A. DATA BUMI * 1.46
-      newRow[colMap["NJOP BUMI (Rp) AREAL BELUM PRODUKTIF pada A. DATA BUMI (Proyeksi NDT Naik 46%)"]] = getVal("NJOP BUMI (Rp) AREAL BELUM PRODUKTIF pada A. DATA BUMI") * 1.46;
+      // 9. NJOP BUMI (Rp) AREAL TIDAK PRODUKTIF pada A. DATA BUMI (kolom AF) = AD * AE
+      rowFormulas["NJOP BUMI (Rp) AREAL TIDAK PRODUKTIF pada A. DATA BUMI"] = `=${col("Areal Tidak Produktif (Copy)")}${excelRow}*${col("NJOP/M Areal Tidak Produktif")}${excelRow}`;
 
-      // Areal Tidak Produktif (Copy)
-      newRow[colMap["Areal Tidak Produktif (Copy)"]] = getVal("Areal Tidak Produktif");
+      // 10. Areal Pengaman (Copy) (kolom AH) = P (Areal Pengaman)
+      rowFormulas["Areal Pengaman (Copy)"] = `=${col("Areal Pengaman")}${excelRow}`;
 
-      // NJOP BUMI (Rp) AREAL TIDAK PRODUKTIF pada A. DATA BUMI = Areal Tidak Produktif (Copy) * NJOP/M Areal Tidak Produktif
-      newRow[colMap["NJOP BUMI (Rp) AREAL TIDAK PRODUKTIF pada A. DATA BUMI"]] = getVal("Areal Tidak Produktif (Copy)") * getVal("NJOP/M Areal Tidak Produktif");
+      // Rumus tambahan yang diperlukan
 
-      // NJOP BUMI (Rp) AREAL TIDAK PRODUKTIF pada A. DATA BUMI (Proyeksi NDT Naik 46%) = NJOP BUMI (Rp) AREAL TIDAK PRODUKTIF pada A. DATA BUMI * 1.46
-      newRow[colMap["NJOP BUMI (Rp) AREAL TIDAK PRODUKTIF pada A. DATA BUMI (Proyeksi NDT Naik 46%)"]] = getVal("NJOP BUMI (Rp) AREAL TIDAK PRODUKTIF pada A. DATA BUMI") * 1.46;
+      // NJOP Bumi Berupa Pengembangan Tanah (Rp) (Kenaikan BIT 10.3%) = U * 1.103
+      rowFormulas["NJOP Bumi Berupa Pengembangan Tanah (Rp) (Kenaikan BIT 10.3%)"] = `=${col("NJOP Bumi Berupa Pengembangan Tanah (Rp)")}${excelRow}*1.103`;
 
-      // Areal Pengaman (Copy)
-      newRow[colMap["Areal Pengaman (Copy)"]] = getVal("Areal Pengaman");
+      // NJOP BUMI (Rp) AREA PRODUKTIF pada A. DATA BUMI (Proyeksi NDT Naik 46%)
+      rowFormulas["NJOP BUMI (Rp) AREA PRODUKTIF pada A. DATA BUMI (Proyeksi NDT Naik 46%)"] = `=ROUND((${col("NJOP Bumi Berupa Tanah (Rp)")}${excelRow}+${col("NJOP Bumi Berupa Pengembangan Tanah (Rp) (Kenaikan BIT 10.3%)")}${excelRow})/${col("Areal Produktif")}${excelRow},0)*${col("Luas Bumi Areal Produktif (m²)")}${excelRow}`;
 
-      // NJOP BUMI (Rp) AREAL PENGAMAN pada A. DATA BUMI = Areal Pengaman (Copy) * NJOP/M Areal Pengaman
-      newRow[colMap["NJOP BUMI (Rp) AREAL PENGAMAN pada A. DATA BUMI"]] = getVal("Areal Pengaman (Copy)") * getVal("NJOP/M Areal Pengaman");
+      // NJOP BUMI (Rp) AREAL BELUM PRODUKTIF pada A. DATA BUMI (Proyeksi NDT Naik 46%) = AB * 1.46
+      rowFormulas["NJOP BUMI (Rp) AREAL BELUM PRODUKTIF pada A. DATA BUMI (Proyeksi NDT Naik 46%)"] = `=${col("NJOP BUMI (Rp) AREAL BELUM PRODUKTIF pada A. DATA BUMI")}${excelRow}*1.46`;
 
-      // NJOP BUMI (Rp) AREAL PENGAMAN pada A. DATA BUMI (Proyeksi NDT Naik 46%) = NJOP BUMI (Rp) AREAL PENGAMAN pada A. DATA BUMI * 1.46
-      newRow[colMap["NJOP BUMI (Rp) AREAL PENGAMAN pada A. DATA BUMI (Proyeksi NDT Naik 46%)"]] = getVal("NJOP BUMI (Rp) AREAL PENGAMAN pada A. DATA BUMI") * 1.46;
+      // NJOP BUMI (Rp) AREAL TIDAK PRODUKTIF pada A. DATA BUMI (Proyeksi NDT Naik 46%) = AF * 1.46
+      rowFormulas["NJOP BUMI (Rp) AREAL TIDAK PRODUKTIF pada A. DATA BUMI (Proyeksi NDT Naik 46%)"] = `=${col("NJOP BUMI (Rp) AREAL TIDAK PRODUKTIF pada A. DATA BUMI")}${excelRow}*1.46`;
 
-      // Areal Emplasemen (Copy)
-      newRow[colMap["Areal Emplasemen (Copy)"]] = getVal("Areal Emplasemen");
+      // NJOP BUMI (Rp) AREAL PENGAMAN pada A. DATA BUMI = AH * AI
+      rowFormulas["NJOP BUMI (Rp) AREAL PENGAMAN pada A. DATA BUMI"] = `=${col("Areal Pengaman (Copy)")}${excelRow}*${col("NJOP/M Areal Pengaman")}${excelRow}`;
 
-      // NJOP BUMI (Rp) AREAL EMPLASEMEN pada A. DATA BUMI = Areal Emplasemen (Copy) * NJOP/M Areal Emplasemen
-      newRow[colMap["NJOP BUMI (Rp) AREAL EMPLASEMEN pada A. DATA BUMI"]] = getVal("Areal Emplasemen (Copy)") * getVal("NJOP/M Areal Emplasemen");
+      // NJOP BUMI (Rp) AREAL PENGAMAN pada A. DATA BUMI (Proyeksi NDT Naik 46%) = AJ * 1.46
+      rowFormulas["NJOP BUMI (Rp) AREAL PENGAMAN pada A. DATA BUMI (Proyeksi NDT Naik 46%)"] = `=${col("NJOP BUMI (Rp) AREAL PENGAMAN pada A. DATA BUMI")}${excelRow}*1.46`;
 
-      // NJOP BUMI (Rp) AREAL EMPLASEMEN pada A. DATA BUMI (Proyeksi NDT Naik 46%) = NJOP BUMI (Rp) AREAL EMPLASEMEN pada A. DATA BUMI * 1.46
-      newRow[colMap["NJOP BUMI (Rp) AREAL EMPLASEMEN pada A. DATA BUMI (Proyeksi NDT Naik 46%)"]] = getVal("NJOP BUMI (Rp) AREAL EMPLASEMEN pada A. DATA BUMI") * 1.46;
+      // Areal Emplasemen (Copy) = Q
+      rowFormulas["Areal Emplasemen (Copy)"] = `=${col("Areal Emplasemen")}${excelRow}`;
 
-      // JUMLAH Luas (m2) pada A. DATA BUMI = LUAS BUMI
-      newRow[colMap["JUMLAH Luas (m2) pada A. DATA BUMI"]] = getVal("LUAS BUMI");
+      // NJOP BUMI (Rp) AREAL EMPLASEMEN pada A. DATA BUMI = AL * AM
+      rowFormulas["NJOP BUMI (Rp) AREAL EMPLASEMEN pada A. DATA BUMI"] = `=${col("Areal Emplasemen (Copy)")}${excelRow}*${col("NJOP/M Areal Emplasemen")}${excelRow}`;
 
-      // JUMLAH NJOP BUMI (Rp) pada A. DATA BUMI = SUM(NJOP BUMI components)
-      const njopComponents = ["NJOP BUMI (Rp) AREA PRODUKTIF pada A. DATA BUMI", "NJOP BUMI (Rp) AREAL BELUM PRODUKTIF pada A. DATA BUMI", "NJOP BUMI (Rp) AREAL TIDAK PRODUKTIF pada A. DATA BUMI", "NJOP BUMI (Rp) AREAL PENGAMAN pada A. DATA BUMI", "NJOP BUMI (Rp) AREAL EMPLASEMEN pada A. DATA BUMI"];
-      newRow[colMap["JUMLAH NJOP BUMI (Rp) pada A. DATA BUMI"]] = njopComponents.reduce((sum, col) => sum + getVal(col), 0);
+      // NJOP BUMI (Rp) AREAL EMPLASEMEN pada A. DATA BUMI (Proyeksi NDT Naik 46%) = AN * 1.46
+      rowFormulas["NJOP BUMI (Rp) AREAL EMPLASEMEN pada A. DATA BUMI (Proyeksi NDT Naik 46%)"] = `=${col("NJOP BUMI (Rp) AREAL EMPLASEMEN pada A. DATA BUMI")}${excelRow}*1.46`;
 
-      // Jumlah NJOP BANGUNAN pada B. DATA BANGUNAN = Jumlah LUAS pada B. DATA BANGUNAN * NJOP BANGUNAN PER METER PERSEGI*) pada B. DATA BANGUNAN
-      newRow[colMap["Jumlah NJOP BANGUNAN pada B. DATA BANGUNAN"]] = getVal("Jumlah LUAS pada B. DATA BANGUNAN") * getVal("NJOP BANGUNAN PER METER PERSEGI*) pada B. DATA BANGUNAN");
+      // JUMLAH Luas (m2) pada A. DATA BUMI = J (LUAS BUMI)
+      rowFormulas["JUMLAH Luas (m2) pada A. DATA BUMI"] = `=${col("LUAS BUMI")}${excelRow}`;
 
-      // TOTAL NJOP (TANAH + BANGUNAN) 2025 = JUMLAH NJOP BUMI (Rp) pada A. DATA BUMI + Jumlah NJOP BANGUNAN pada B. DATA BANGUNAN
-      newRow[colMap["TOTAL NJOP (TANAH + BANGUNAN) 2025"]] = getVal("JUMLAH NJOP BUMI (Rp) pada A. DATA BUMI") + getVal("Jumlah NJOP BANGUNAN pada B. DATA BANGUNAN");
+      // JUMLAH NJOP BUMI (Rp) pada A. DATA BUMI = SUM(Z, AB, AF, AJ, AN)
+      rowFormulas["JUMLAH NJOP BUMI (Rp) pada A. DATA BUMI"] = `=${col("NJOP BUMI (Rp) AREA PRODUKTIF pada A. DATA BUMI")}${excelRow}+${col("NJOP BUMI (Rp) AREAL BELUM PRODUKTIF pada A. DATA BUMI")}${excelRow}+${col("NJOP BUMI (Rp) AREAL TIDAK PRODUKTIF pada A. DATA BUMI")}${excelRow}+${col("NJOP BUMI (Rp) AREAL PENGAMAN pada A. DATA BUMI")}${excelRow}+${col("NJOP BUMI (Rp) AREAL EMPLASEMEN pada A. DATA BUMI")}${excelRow}`;
 
-      // SPPT 2025 = ((TOTAL NJOP (TANAH + BANGUNAN) 2025 - 12000000) * 40%) * 0.5%
-      const totalNJOP25 = getVal("TOTAL NJOP (TANAH + BANGUNAN) 2025");
-      newRow[colMap["SPPT 2025"]] = totalNJOP25 > 12000000 ? ((totalNJOP25 - 12000000) * 0.4) * 0.005 : 0;
+      // Jumlah NJOP BANGUNAN pada B. DATA BANGUNAN = AR * AS
+      rowFormulas["Jumlah NJOP BANGUNAN pada B. DATA BANGUNAN"] = `=${col("Jumlah LUAS pada B. DATA BANGUNAN")}${excelRow}*${col("NJOP BANGUNAN PER METER PERSEGI*) pada B. DATA BANGUNAN")}${excelRow}`;
+
+      // TOTAL NJOP (TANAH + BANGUNAN) 2025 = AT + AU
+      rowFormulas["TOTAL NJOP (TANAH + BANGUNAN) 2025"] = `=${col("JUMLAH NJOP BUMI (Rp) pada A. DATA BUMI")}${excelRow}+${col("Jumlah NJOP BANGUNAN pada B. DATA BANGUNAN")}${excelRow}`;
+
+      // SPPT 2025 = ((AV - 12000000) * 40%) * 0.5%
+      rowFormulas["SPPT 2025"] = `=(${col("TOTAL NJOP (TANAH + BANGUNAN) 2025")}${excelRow}-12000000)*0.4*0.005`;
 
       // SIMULASI TOTAL NJOP (TANAH + BANGUNAN) 2026 (Hanya Kenaikan BIT 10,3% + NDT Tetap)
-      const T = getVal("NJOP Bumi Berupa Tanah (Rp)");
-      const V = getVal("NJOP Bumi Berupa Pengembangan Tanah (Rp) (Kenaikan BIT 10.3%)");
-      const R = getVal("Areal Produktif");
-      const X = getVal("Luas Bumi Areal Produktif (m²)");
-      const AB = getVal("NJOP BUMI (Rp) AREAL BELUM PRODUKTIF pada A. DATA BUMI");
-      const AF = getVal("NJOP BUMI (Rp) AREAL TIDAK PRODUKTIF pada A. DATA BUMI");
-      const AJ = getVal("NJOP BUMI (Rp) AREAL PENGAMAN pada A. DATA BUMI");
-      const AN = getVal("NJOP BUMI (Rp) AREAL EMPLASEMEN pada A. DATA BUMI");
-      const AT = getVal("Jumlah NJOP BANGUNAN pada B. DATA BANGUNAN");
-      newRow[colMap["SIMULASI TOTAL NJOP (TANAH + BANGUNAN) 2026 (Hanya Kenaikan BIT 10,3% + NDT Tetap)"]] = R > 0 ? (Math.round((T + V) / R) * X + AB + AF + AJ + AN) + AT : AT;
+      rowFormulas["SIMULASI TOTAL NJOP (TANAH + BANGUNAN) 2026 (Hanya Kenaikan BIT 10,3% + NDT Tetap)"] = `=ROUND((${col("NJOP Bumi Berupa Tanah (Rp)")}${excelRow}+${col("NJOP Bumi Berupa Pengembangan Tanah (Rp) (Kenaikan BIT 10.3%)")}${excelRow})/${col("Areal Produktif")}${excelRow},0)*${col("Luas Bumi Areal Produktif (m²)")}${excelRow}+${col("NJOP BUMI (Rp) AREAL BELUM PRODUKTIF pada A. DATA BUMI")}${excelRow}+${col("NJOP BUMI (Rp) AREAL TIDAK PRODUKTIF pada A. DATA BUMI")}${excelRow}+${col("NJOP BUMI (Rp) AREAL PENGAMAN pada A. DATA BUMI")}${excelRow}+${col("NJOP BUMI (Rp) AREAL EMPLASEMEN pada A. DATA BUMI")}${excelRow}+${col("Jumlah NJOP BANGUNAN pada B. DATA BANGUNAN")}${excelRow}`;
 
       // SIMULASI SPPT 2026 (Hanya Kenaikan BIT 10,3% + NDT Tetap)
-      const simNJOP26 = getVal("SIMULASI TOTAL NJOP (TANAH + BANGUNAN) 2026 (Hanya Kenaikan BIT 10,3% + NDT Tetap)");
-      newRow[colMap["SIMULASI SPPT 2026 (Hanya Kenaikan BIT 10,3% + NDT Tetap)"]] = simNJOP26 > 12000000 ? ((simNJOP26 - 12000000) * 0.4) * 0.005 : 0;
+      rowFormulas["SIMULASI SPPT 2026 (Hanya Kenaikan BIT 10,3% + NDT Tetap)"] = `=(${col("SIMULASI TOTAL NJOP (TANAH + BANGUNAN) 2026 (Hanya Kenaikan BIT 10,3% + NDT Tetap)")}${excelRow}-12000000)*0.4*0.005`;
 
-      // Kenaikan = SIMULASI SPPT 2026 (Hanya Kenaikan BIT 10,3% + NDT Tetap) - SPPT 2025
-      const simSPPT26 = getVal("SIMULASI SPPT 2026 (Hanya Kenaikan BIT 10,3% + NDT Tetap)");
-      const sppt25 = getVal("SPPT 2025");
-      newRow[colMap["Kenaikan"]] = simSPPT26 - sppt25;
+      // Kenaikan = AY - AW
+      rowFormulas["Kenaikan"] = `=${col("SIMULASI SPPT 2026 (Hanya Kenaikan BIT 10,3% + NDT Tetap)")}${excelRow}-${col("SPPT 2025")}${excelRow}`;
 
-      // Persentase = Kenaikan / SPPT 2025
-      newRow[colMap["Persentase"]] = sppt25 > 0 ? (simSPPT26 - sppt25) / sppt25 : 0;
+      // Persentase = AZ / AW
+      rowFormulas["Persentase"] = `=${col("Kenaikan")}${excelRow}/${col("SPPT 2025")}${excelRow}`;
 
       // SIMULASI TOTAL NJOP (TANAH + BANGUNAN) 2026 (Kenaikan BIT 10,3% + NDT 46%)
-      const AA = getVal("NJOP BUMI (Rp) AREA PRODUKTIF pada A. DATA BUMI (Proyeksi NDT Naik 46%)");
-      const AC = getVal("NJOP BUMI (Rp) AREAL BELUM PRODUKTIF pada A. DATA BUMI (Proyeksi NDT Naik 46%)");
-      const AG = getVal("NJOP BUMI (Rp) AREAL TIDAK PRODUKTIF pada A. DATA BUMI (Proyeksi NDT Naik 46%)");
-      const AK = getVal("NJOP BUMI (Rp) AREAL PENGAMAN pada A. DATA BUMI (Proyeksi NDT Naik 46%)");
-      const AO = getVal("NJOP BUMI (Rp) AREAL EMPLASEMEN pada A. DATA BUMI (Proyeksi NDT Naik 46%)");
-      newRow[colMap["SIMULASI TOTAL NJOP (TANAH + BANGUNAN) 2026 (Kenaikan BIT 10,3% + NDT 46%)"]] = AA + AC + AG + AK + AO + AT;
+      rowFormulas["SIMULASI TOTAL NJOP (TANAH + BANGUNAN) 2026 (Kenaikan BIT 10,3% + NDT 46%)"] = `=${col("NJOP BUMI (Rp) AREA PRODUKTIF pada A. DATA BUMI (Proyeksi NDT Naik 46%)")}${excelRow}+${col("NJOP BUMI (Rp) AREAL BELUM PRODUKTIF pada A. DATA BUMI (Proyeksi NDT Naik 46%)")}${excelRow}+${col("NJOP BUMI (Rp) AREAL TIDAK PRODUKTIF pada A. DATA BUMI (Proyeksi NDT Naik 46%)")}${excelRow}+${col("NJOP BUMI (Rp) AREAL PENGAMAN pada A. DATA BUMI (Proyeksi NDT Naik 46%)")}${excelRow}+${col("NJOP BUMI (Rp) AREAL EMPLASEMEN pada A. DATA BUMI (Proyeksi NDT Naik 46%)")}${excelRow}+${col("Jumlah NJOP BANGUNAN pada B. DATA BANGUNAN")}${excelRow}`;
 
       // SIMULASI SPPT 2026 (Kenaikan BIT 10,3% + NDT 46%)
-      const simNJOP26NDT = getVal("SIMULASI TOTAL NJOP (TANAH + BANGUNAN) 2026 (Kenaikan BIT 10,3% + NDT 46%)");
-      newRow[colMap["SIMULASI SPPT 2026 (Kenaikan BIT 10,3% + NDT 46%)"]] = simNJOP26NDT > 12000000 ? ((simNJOP26NDT - 12000000) * 0.4) * 0.005 : 0;
+      rowFormulas["SIMULASI SPPT 2026 (Kenaikan BIT 10,3% + NDT 46%)"] = `=(${col("SIMULASI TOTAL NJOP (TANAH + BANGUNAN) 2026 (Kenaikan BIT 10,3% + NDT 46%)")}${excelRow}-12000000)*0.4*0.005`;
 
-      return newRow;
-    });
+      formulasByRow[rowIdx] = rowFormulas;
+    }
+
+    return formulasByRow;
   };
 
   // Ekstraksi semua file
@@ -485,7 +473,7 @@ export default function App() {
     setError(null);
 
     try {
-      const allRowsData: (number | string | null)[][] = [];
+      const allRowsData: CellValue[][] = [];
       
       for (let i = 0; i < uploadedFiles.length; i++) {
         const fileData = uploadedFiles[i];
@@ -496,7 +484,8 @@ export default function App() {
 
         try {
           const extractedData = await extractFileData(fileData.file);
-          const row = [i + 1, ...itemsDefinitions.map(item => extractedData[item.label] ?? null)];
+          // Data statis dari file
+          const row: CellValue[] = [i + 1, ...itemsDefinitions.map(item => extractedData[item.label] ?? null)];
           allRowsData.push(row);
 
           setUploadedFiles(prev => prev.map(f => 
@@ -511,11 +500,26 @@ export default function App() {
         setExtractionProgress(Math.round(((i + 1) / uploadedFiles.length) * 100));
       }
 
-      // Hitung rumus-rumus
-      const calculatedRows = calculateFormulas(allRowsData);
+      // Generate formulas untuk setiap baris
+      const formulasByRow = calculateFormulas(allRowsData.length);
+
+      // Gabungkan data statis dengan formulas
+      const finalRows = allRowsData.map((row, rowIdx) => {
+        const rowFormulas = formulasByRow[rowIdx];
+        const newRow = [...row];
+        
+        // Ganti nilai dengan formulas untuk kolom yang sesuai
+        itemsDefinitions.forEach((item, colIdx) => {
+          if (rowFormulas[item.label]) {
+            newRow[colIdx + 1] = { f: rowFormulas[item.label].replace(/^=/, '') }; // Hapus = di awal karena xlsx sudah handle
+          }
+        });
+        
+        return newRow;
+      });
 
       const headers = ["NO", ...itemsDefinitions.map(item => item.label)];
-      setExtractionResult({ headers, rows: calculatedRows });
+      setExtractionResult({ headers, rows: finalRows });
       setSuccessMessage('Ekstraksi berhasil diselesaikan!');
       setTimeout(() => setSuccessMessage(null), 3000);
     } catch (err) {
@@ -537,7 +541,14 @@ export default function App() {
       const wb = XLSX.utils.book_new();
       
       // Sheet 1: Hasil
-      const wsData = [extractionResult.headers, ...extractionResult.rows];
+      const wsData = [extractionResult.headers, ...extractionResult.rows.map(row => 
+        row.map(cell => {
+          if (cell && typeof cell === 'object' && 'f' in cell) {
+            return cell; // Formula cell
+          }
+          return cell;
+        })
+      )];
       const ws1 = XLSX.utils.aoa_to_sheet(wsData);
       
       // Dapatkan mapping kolom untuk header formulas
@@ -548,17 +559,6 @@ export default function App() {
       });
 
       // Header formulas yang dinamis - mengacu ke sheet '2. Kesimpulan'
-      // V = kolom ke-21 (indeks 21)
-      // AA = kolom ke-26 (indeks 26)
-      // AC = kolom ke-28 (indeks 28)
-      // AG = kolom ke-32 (indeks 32)
-      // AK = kolom ke-36 (indeks 36)
-      // AO = kolom ke-40 (indeks 40)
-      // AX = kolom ke-49 (indeks 49)
-      // AY = kolom ke-50 (indeks 50)
-      // BB = kolom ke-53 (indeks 53)
-      // BC = kolom ke-54 (indeks 54)
-      
       const headerFormulas: Record<string, { f: string }> = {
         'V1': { f: '="NJOP Bumi Berupa Pengembangan Tanah (Rp) (Kenaikan BIT "&\'2. Kesimpulan\'!$E$2*100&"%)"' },
         'AA1': { f: '="NJOP BUMI (Rp) AREA PRODUKTIF pada A. DATA BUMI (Proyeksi NDT Naik "&\'2. Kesimpulan\'!$E$14*100&"%)"' },
@@ -578,7 +578,6 @@ export default function App() {
       });
 
       // Format kolom J (indeks 9) sampai BC (indeks 54) dengan format number Comma Style tanpa desimal
-      // Format: "#,##0" (Comma Style dengan 0 decimal)
       const range = XLSX.utils.decode_range(ws1['!ref'] || 'A1');
       
       // Kolom J = indeks 9, kolom BC = indeks 54
@@ -588,8 +587,8 @@ export default function App() {
         for (let row = 1; row <= range.e.r; row++) {
           const cellAddr = `${colLetter}${row + 1}`;
           if (ws1[cellAddr]) {
-            // Jika nilai adalah number, apply format
-            if (typeof ws1[cellAddr].v === 'number') {
+            // Jika cell adalah formula atau nilai number, apply format
+            if (ws1[cellAddr].f || typeof ws1[cellAddr].v === 'number') {
               ws1[cellAddr].z = '#,##0';
             }
           }
@@ -631,7 +630,7 @@ export default function App() {
       
       const ws2 = XLSX.utils.aoa_to_sheet(kesimpulanData);
       
-      // Format persentase untuk cell E2, B13, B26, E14
+      // Format persentase untuk cell E2, B13, B26, E17
       if (ws2['E2']) ws2['E2'].z = '0.00%';
       if (ws2['B13']) ws2['B13'].z = '0%';
       if (ws2['B26']) ws2['B26'].z = '0%';
@@ -640,7 +639,7 @@ export default function App() {
       // Format number untuk kolom C
       for (let row = 4; row <= 27; row++) {
         const cellAddr = `C${row}`;
-        if (ws2[cellAddr] && typeof ws2[cellAddr].v === 'number') {
+        if (ws2[cellAddr] && (ws2[cellAddr].f || typeof ws2[cellAddr].v === 'number')) {
           ws2[cellAddr].z = '#,##0';
         }
       }
