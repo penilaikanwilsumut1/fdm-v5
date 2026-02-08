@@ -613,9 +613,7 @@ export default function App() {
         // Baris 9: Target (DINAIKKAN dari baris 8)
         ['Target Penerimaan PBB 2026', '', 110289165592, '', ''],
         // Baris 10: Selisih (DINAIKKAN dari baris 9)
-        ['Selisih antara Simulasi (Collection Rate 100%) & Target', '', { f: '=C8-C9' }, { f: '=IF(C10>0,"Tercapai","Tidak Tercapai")' }, ''],
-        // Baris kosong
-        ['', '', '', '', ''],
+        ['Selisih antara Simulasi (Collection Rate 100%) & Target', '', { f: '=C7-C8' }, { f: '=IF(C10>0,"Tercapai","Tidak Tercapai")' }, ''],
         // Baris 12: Collection Rate 95% (DINAIKKAN dari baris 11)
         ['Simulasi Penerimaan PBB 2026 (Collection Rate 95%)', 0.95, { f: '=C8*B12' }, '', ''],
         // Baris 13: Selisih 95% (DINAIKKAN dari baris 12)
