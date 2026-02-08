@@ -921,10 +921,11 @@ export default function App() {
         {/* Footer */}
         <div className="mt-8 text-center text-sm text-slate-500">
           <p>
-            <strong>Saran/Masukan: 0822-9411-6001 (Dedek)
+            <strong>Privasi Terjamin:</strong> File yang diupload tidak disimpan di server.
+            Semua proses dilakukan di browser Anda.
           </p>
           <p className="mt-2">
-            Update: 8 Februari 2026
+            Ekstraktor FDM V5 &copy; {new Date().getFullYear()}
           </p>
         </div>
       </div>
