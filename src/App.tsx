@@ -10,9 +10,9 @@ import {
   RefreshCw, 
   FileSpreadsheet, 
   CheckCircle, 
+  XCircle,
   AlertCircle,
-  Trash2,
-  X
+  Trash2
 } from 'lucide-react';
 import * as XLSX from 'xlsx';
 import './App.css';
@@ -680,45 +680,6 @@ export default function App() {
   };
 
   return (
-    <>
-      {/* Font Imports */}
-      <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700&family=Source+Code+Pro:wght@400;500;600&display=swap');
-        
-        :root {
-          --font-heading: 'Playfair Display', serif;
-          --font-body: 'Inter', sans-serif;
-          --font-mono: 'Source Code Pro', monospace;
-        }
-        
-        /* Headings - MongoDB Value Serif (Playfair Display) */
-        h1, h2, h3, h4, h5, h6,
-        .font-heading,
-        [class*="CardTitle"] {
-          font-family: var(--font-heading) !important;
-        }
-        
-        /* Body text - Euclid Circular A (Inter) */
-        body, p, span, div, button, input, label,
-        .font-body {
-          font-family: var(--font-body) !important;
-        }
-        
-        /* Monospace - Source Code Pro */
-        code, pre, .font-mono, .mono {
-          font-family: var(--font-mono) !important;
-        }
-        
-        /* Specific overrides for UI components */
-        .text-3xl, .text-4xl, .font-bold {
-          font-family: var(--font-heading) !important;
-        }
-        
-        button, .button, [role="button"] {
-          font-family: var(--font-body) !important;
-        }
-      `}</style>
-      
       <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 p-4 md:p-8 font-body">
         <div className="max-w-4xl mx-auto space-y-6">
           {/* Header */}
