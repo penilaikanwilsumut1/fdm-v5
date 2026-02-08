@@ -4,6 +4,11 @@ module.exports = {
   content: ['./index.html', './src/**/*.{js,ts,jsx,tsx}'],
   theme: {
     extend: {
+      fontFamily: {
+        'heading': ['"Playfair Display"', 'serif'],
+        'body': ['Inter', 'system-ui', 'sans-serif'],
+        'mono': ['"Source Code Pro"', 'monospace'],
+      },
       colors: {
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
