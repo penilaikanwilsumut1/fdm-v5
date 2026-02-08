@@ -97,6 +97,17 @@ interface ExtractionResult {
   rows: (number | string | null)[][];
 }
 
+// Fungsi untuk mengkonversi indeks kolom ke huruf kolom Excel (0 = A, 1 = B, dst)
+const getColumnLetter = (index: number): string => {
+  let result = '';
+  let temp = index;
+  while (temp >= 0) {
+    result = String.fromCharCode(65 + (temp % 26)) + result;
+    temp = Math.floor(temp / 26) - 1;
+  }
+  return result;
+};
+
 export default function App() {
   const [uploadedFiles, setUploadedFiles] = useState<UploadedFile[]>([]);
   const [isExtracting, setIsExtracting] = useState(false);
@@ -529,13 +540,58 @@ export default function App() {
       const wsData = [extractionResult.headers, ...extractionResult.rows];
       const ws1 = XLSX.utils.aoa_to_sheet(wsData);
       
-      // Format kolom J sampai BC sebagai number format
+      // Dapatkan mapping kolom untuk header formulas
+      const headers = extractionResult.headers;
+      const colMap: Record<string, string> = {};
+      headers.forEach((h, i) => { 
+        colMap[h] = getColumnLetter(i);
+      });
+
+      // Header formulas yang dinamis - mengacu ke sheet '2. Kesimpulan'
+      // V = kolom ke-21 (indeks 21)
+      // AA = kolom ke-26 (indeks 26)
+      // AC = kolom ke-28 (indeks 28)
+      // AG = kolom ke-32 (indeks 32)
+      // AK = kolom ke-36 (indeks 36)
+      // AO = kolom ke-40 (indeks 40)
+      // AX = kolom ke-49 (indeks 49)
+      // AY = kolom ke-50 (indeks 50)
+      // BB = kolom ke-53 (indeks 53)
+      // BC = kolom ke-54 (indeks 54)
+      
+      const headerFormulas: Record<string, { f: string }> = {
+        'V1': { f: '="NJOP Bumi Berupa Pengembangan Tanah (Rp) (Kenaikan BIT "&\'2. Kesimpulan\'!$E$2*100&"%)"' },
+        'AA1': { f: '="NJOP BUMI (Rp) AREA PRODUKTIF pada A. DATA BUMI (Proyeksi NDT Naik "&\'2. Kesimpulan\'!$E$14*100&"%)"' },
+        'AC1': { f: '="NJOP BUMI (Rp) AREAL BELUM PRODUKTIF pada A. DATA BUMI (Proyeksi NDT Naik "&\'2. Kesimpulan\'!$E$14*100&"%)"' },
+        'AG1': { f: '="NJOP BUMI (Rp) AREAL TIDAK PRODUKTIF pada A. DATA BUMI (Proyeksi NDT Naik "&\'2. Kesimpulan\'!$E$14*100&"%)"' },
+        'AK1': { f: '="NJOP BUMI (Rp) AREAL PENGAMAN pada A. DATA BUMI (Proyeksi NDT Naik "&\'2. Kesimpulan\'!$E$14*100&"%)"' },
+        'AO1': { f: '="NJOP BUMI (Rp) AREAL EMPLASEMEN pada A. DATA BUMI (Proyeksi NDT Naik "&\'2. Kesimpulan\'!$E$14*100&"%)"' },
+        'AX1': { f: '="SIMULASI TOTAL NJOP (TANAH + BANGUNAN) 2026 (Hanya Kenaikan BIT "&\'2. Kesimpulan\'!$E$2*100&"% dan NDT Tetap)"' },
+        'AY1': { f: '="SIMULASI SPPT 2026 (Hanya Kenaikan BIT "&\'2. Kesimpulan\'!$E$2*100&"% dan NDT Tetap)"' },
+        'BB1': { f: '="SIMULASI TOTAL NJOP (TANAH + BANGUNAN) 2026 (Kenaikan BIT "&\'2. Kesimpulan\'!$E$2*100&"% + NDT "&\'2. Kesimpulan\'!$E$14*100&"%)"' },
+        'BC1': { f: '="SIMULASI SPPT 2026 (Kenaikan BIT "&\'2. Kesimpulan\'!$E$2*100&"% + NDT "&\'2. Kesimpulan\'!$E$14*100&"%)"' },
+      };
+
+      // Apply header formulas
+      Object.entries(headerFormulas).forEach(([cellAddr, formulaObj]) => {
+        ws1[cellAddr] = formulaObj;
+      });
+
+      // Format kolom J (indeks 9) sampai BC (indeks 54) dengan format number Comma Style tanpa desimal
+      // Format: "#,##0" (Comma Style dengan 0 decimal)
       const range = XLSX.utils.decode_range(ws1['!ref'] || 'A1');
+      
+      // Kolom J = indeks 9, kolom BC = indeks 54
       for (let col = 9; col <= 54; col++) {
+        const colLetter = getColumnLetter(col);
+        // Apply format untuk setiap baris data (mulai dari baris 2, indeks 1)
         for (let row = 1; row <= range.e.r; row++) {
-          const cellAddr = XLSX.utils.encode_cell({ r: row, c: col });
-          if (ws1[cellAddr] && typeof ws1[cellAddr].v === 'number') {
-            ws1[cellAddr].z = '#,##0';
+          const cellAddr = `${colLetter}${row + 1}`;
+          if (ws1[cellAddr]) {
+            // Jika nilai adalah number, apply format
+            if (typeof ws1[cellAddr].v === 'number') {
+              ws1[cellAddr].z = '#,##0';
+            }
           }
         }
       }
@@ -574,6 +630,21 @@ export default function App() {
       ];
       
       const ws2 = XLSX.utils.aoa_to_sheet(kesimpulanData);
+      
+      // Format persentase untuk cell E2, B13, B26, E14
+      if (ws2['E2']) ws2['E2'].z = '0.00%';
+      if (ws2['B13']) ws2['B13'].z = '0%';
+      if (ws2['B26']) ws2['B26'].z = '0%';
+      if (ws2['E17']) ws2['E17'].z = '0%';
+      
+      // Format number untuk kolom C
+      for (let row = 4; row <= 27; row++) {
+        const cellAddr = `C${row}`;
+        if (ws2[cellAddr] && typeof ws2[cellAddr].v === 'number') {
+          ws2[cellAddr].z = '#,##0';
+        }
+      }
+      
       XLSX.utils.book_append_sheet(wb, ws2, '2. Kesimpulan');
 
       // Download file
