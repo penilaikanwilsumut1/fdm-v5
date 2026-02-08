@@ -396,22 +396,22 @@ export default function App() {
       // Rumus tambahan yang diperlukan
 
       // NJOP Bumi Berupa Pengembangan Tanah (Rp) (Kenaikan BIT 10.3%) = U * 1.103
-      rowFormulas["NJOP Bumi Berupa Pengembangan Tanah (Rp) (Kenaikan BIT 10.3%)"] = `=${col("NJOP Bumi Berupa Pengembangan Tanah (Rp)")}${excelRow}*(1+'2. Kesimpulan'!$E$2)`;
+      rowFormulas["NJOP Bumi Berupa Pengembangan Tanah (Rp) (Kenaikan BIT 10.3%)"] = `=${col("NJOP Bumi Berupa Pengembangan Tanah (Rp)")}${excelRow}*1.103`;
 
       // NJOP BUMI (Rp) AREA PRODUKTIF pada A. DATA BUMI (Proyeksi NDT Naik 46%)
       rowFormulas["NJOP BUMI (Rp) AREA PRODUKTIF pada A. DATA BUMI (Proyeksi NDT Naik 46%)"] = `=ROUND((${col("NJOP Bumi Berupa Tanah (Rp)")}${excelRow}+${col("NJOP Bumi Berupa Pengembangan Tanah (Rp) (Kenaikan BIT 10.3%)")}${excelRow})/${col("Areal Produktif")}${excelRow},0)*${col("Luas Bumi Areal Produktif (m²)")}${excelRow}`;
 
       // NJOP BUMI (Rp) AREAL BELUM PRODUKTIF pada A. DATA BUMI (Proyeksi NDT Naik 46%) = AB * 1.46
-      rowFormulas["NJOP BUMI (Rp) AREAL BELUM PRODUKTIF pada A. DATA BUMI (Proyeksi NDT Naik 46%)"] = `=${col("NJOP BUMI (Rp) AREAL BELUM PRODUKTIF pada A. DATA BUMI")}${excelRow}*(1+'2. Kesimpulan'!$E$14)`;
+      rowFormulas["NJOP BUMI (Rp) AREAL BELUM PRODUKTIF pada A. DATA BUMI (Proyeksi NDT Naik 46%)"] = `=${col("NJOP BUMI (Rp) AREAL BELUM PRODUKTIF pada A. DATA BUMI")}${excelRow}*1.46`;
 
       // NJOP BUMI (Rp) AREAL TIDAK PRODUKTIF pada A. DATA BUMI (Proyeksi NDT Naik 46%) = AF * 1.46
-      rowFormulas["NJOP BUMI (Rp) AREAL TIDAK PRODUKTIF pada A. DATA BUMI (Proyeksi NDT Naik 46%)"] = `=${col("NJOP BUMI (Rp) AREAL TIDAK PRODUKTIF pada A. DATA BUMI")}${excelRow}*(1+'2. Kesimpulan'!$E$14)`;
+      rowFormulas["NJOP BUMI (Rp) AREAL TIDAK PRODUKTIF pada A. DATA BUMI (Proyeksi NDT Naik 46%)"] = `=${col("NJOP BUMI (Rp) AREAL TIDAK PRODUKTIF pada A. DATA BUMI")}${excelRow}*1.46`;
 
       // NJOP BUMI (Rp) AREAL PENGAMAN pada A. DATA BUMI = AH * AI
       rowFormulas["NJOP BUMI (Rp) AREAL PENGAMAN pada A. DATA BUMI"] = `=${col("Areal Pengaman (Copy)")}${excelRow}*${col("NJOP/M Areal Pengaman")}${excelRow}`;
 
       // NJOP BUMI (Rp) AREAL PENGAMAN pada A. DATA BUMI (Proyeksi NDT Naik 46%) = AJ * 1.46
-      rowFormulas["NJOP BUMI (Rp) AREAL PENGAMAN pada A. DATA BUMI (Proyeksi NDT Naik 46%)"] = `=${col("NJOP BUMI (Rp) AREAL PENGAMAN pada A. DATA BUMI")}${excelRow}*(1+'2. Kesimpulan'!$E$14)`;
+      rowFormulas["NJOP BUMI (Rp) AREAL PENGAMAN pada A. DATA BUMI (Proyeksi NDT Naik 46%)"] = `=${col("NJOP BUMI (Rp) AREAL PENGAMAN pada A. DATA BUMI")}${excelRow}*1.46`;
 
       // Areal Emplasemen (Copy) = Q
       rowFormulas["Areal Emplasemen (Copy)"] = `=${col("Areal Emplasemen")}${excelRow}`;
@@ -420,7 +420,7 @@ export default function App() {
       rowFormulas["NJOP BUMI (Rp) AREAL EMPLASEMEN pada A. DATA BUMI"] = `=${col("Areal Emplasemen (Copy)")}${excelRow}*${col("NJOP/M Areal Emplasemen")}${excelRow}`;
 
       // NJOP BUMI (Rp) AREAL EMPLASEMEN pada A. DATA BUMI (Proyeksi NDT Naik 46%) = AN * 1.46
-      rowFormulas["NJOP BUMI (Rp) AREAL EMPLASEMEN pada A. DATA BUMI (Proyeksi NDT Naik 46%)"] = `=${col("NJOP BUMI (Rp) AREAL EMPLASEMEN pada A. DATA BUMI")}${excelRow}*(1+'2. Kesimpulan'!$E$14)`;
+      rowFormulas["NJOP BUMI (Rp) AREAL EMPLASEMEN pada A. DATA BUMI (Proyeksi NDT Naik 46%)"] = `=${col("NJOP BUMI (Rp) AREAL EMPLASEMEN pada A. DATA BUMI")}${excelRow}*1.46`;
 
       // JUMLAH Luas (m2) pada A. DATA BUMI = J (LUAS BUMI)
       rowFormulas["JUMLAH Luas (m2) pada A. DATA BUMI"] = `=${col("LUAS BUMI")}${excelRow}`;
@@ -595,66 +595,73 @@ export default function App() {
         }
       }
       
+      // Set column widths for better readability
+      ws1['!cols'] = headers.map(() => ({ wch: 25 }));
+      
       XLSX.utils.book_append_sheet(wb, ws1, '1. Hasil');
 
-      // Sheet 2: Kesimpulan - DENGAN ISIAN A2, B2, C2 YANG SUDAH DITAMBAHKAN
-      const kesimpulanData = [
-        // Baris 1: Header utama
-        ['Poin', { f: '="Keterangan (BIT + "&E2*100&"% dan NDT Tetap)"' }, 'Nilai', 'Keterangan', 'Skenario Kenaikan BIT'],
-        // Baris 2: Isian A2, B2, C2 sudah ditambahkan
-        ['Simulasi Penerimaan PBB 2026', 'Perkebunan', { f: "=SUMIF('1. Hasil'!C2:C10000,\"Perkebunan\",'1. Hasil'!AY2:AY10000)" }, '', 0.103],
-        // Baris 3-7: Data Simulasi (DINAIKKAN dari baris 2-6)
-        ['Simulasi Penerimaan PBB 2026', 'Minerba', { f: "=SUMIF('1. Hasil'!C2:C10000,\"Minerba\",'1. Hasil'!AY2:AY10000)" }, '', ''],
-        ['Simulasi Penerimaan PBB 2026', 'Perhutanan (HTI)', { f: "=SUMIF('1. Hasil'!C2:C10000,\"Perhutanan (HTI)\",'1. Hasil'!AY2:AY10000)" }, '', ''],
-        ['Simulasi Penerimaan PBB 2026', 'Perhutanan (Hutan Alam)', { f: "=SUMIF('1. Hasil'!C2:C10000,\"Perhutanan (Hutan Alam)\",'1. Hasil'!AY2:AY10000)" }, '', ''],
-        ['Simulasi Penerimaan PBB 2026', 'Sektor Lainnya', { f: "=SUMIF('1. Hasil'!C2:C10000,\"Sektor Lainnya\",'1. Hasil'!AY2:AY10000)" }, '', ''],
-        // Baris 8: Collection Rate 100% (DINAIKKAN dari baris 7)
-        ['Simulasi Penerimaan PBB 2026 (Collection Rate 100%)', { f: '=(COUNT(\'1. Hasil\'!A2:A10000))&" NOP"' }, { f: '=SUM(C2:C6)' }, '', ''],
-        // Baris 9: Target (DINAIKKAN dari baris 8)
+      // Sheet 2: Kesimpulan - FIXED (removed empty row 2, shifted all data up by 1 row)
+      const kesimpulanData: (string | number | { f: string; t?: 'n' | 's' })[][] = [
+        // Row 1: Headers
+        ['Poin', { f: '="Keterangan (BIT + "&E2*100&"% dan NDT Tetap)"', t: 's' as const }, 'Nilai', 'Keterangan', 'Skenario Kenaikan BIT'],
+        // Row 2: Data starts immediately (no empty row)
+        ['Simulasi Penerimaan PBB 2026', 'Perkebunan', { f: "SUMIF('1. Hasil'!C2:C10000,\"Perkebunan\",'1. Hasil'!AY2:AY10000)", t: 'n' as const }, '', 0.103],
+        ['Simulasi Penerimaan PBB 2026', 'Minerba', { f: "SUMIF('1. Hasil'!C2:C10000,\"Minerba\",'1. Hasil'!AY2:AY10000)", t: 'n' as const }, '', ''],
+        ['Simulasi Penerimaan PBB 2026', 'Perhutanan (HTI)', { f: "SUMIF('1. Hasil'!C2:C10000,\"Perhutanan (HTI)\",'1. Hasil'!AY2:AY10000)", t: 'n' as const }, '', ''],
+        ['Simulasi Penerimaan PBB 2026', 'Perhutanan (Hutan Alam)', { f: "SUMIF('1. Hasil'!C2:C10000,\"Perhutanan (Hutan Alam)\",'1. Hasil'!AY2:AY10000)", t: 'n' as const }, '', ''],
+        ['Simulasi Penerimaan PBB 2026', 'Sektor Lainnya', { f: "SUMIF('1. Hasil'!C2:C10000,\"Sektor Lainnya\",'1. Hasil'!AY2:AY10000)", t: 'n' as const }, '', ''],
+        ['Simulasi Penerimaan PBB 2026 (Collection Rate 100%)', { f: "=(COUNT('1. Hasil'!A2:A10000))&\" NOP\"", t: 's' as const }, { f: 'SUM(C2:C6)', t: 'n' as const }, '', ''],
         ['Target Penerimaan PBB 2026', '', 110289165592, '', ''],
-        // Baris 10: Selisih (DINAIKKAN dari baris 9)
-        ['Selisih antara Simulasi (Collection Rate 100%) & Target', '', { f: '=C7-C8' }, { f: '=IF(C9>0,"Tercapai","Tidak Tercapai")' }, ''],
-        // Baris 12: Collection Rate 95% (DINAIKKAN dari baris 11)
-        [{ f: '="Simulasi Penerimaan PBB 2026 (Collection Rate "&B10*100&"%)"' }, 0.95, { f: '=C7*B10' }, '', ''],
-        // Baris 13: Selisih 95% (DINAIKKAN dari baris 12)
-        [{ f: '="Selisih antara Simulasi (Collection Rate "&B10*100&"%) & Target"' }, '', { f: '=C10-C8' }, { f: '=IF(C11>0,"Tercapai","Tidak Tercapai")' }, ''],
-        // Baris kosong
+        ['Selisih antara Simulasi (Collection Rate 100%) & Target', '', { f: 'C7-C8', t: 'n' as const }, { f: 'IF(C9>0,"Tercapai","Tidak Tercapai")', t: 's' as const }, ''],
+        [{ f: '="Simulasi Penerimaan PBB 2026 (Collection Rate "&B10*100&"%)"', t: 's' as const }, '95%', { f: 'C7*B10', t: 'n' as const }, '', ''],
+        [{ f: '="Selisih antara Simulasi (Collection Rate "&B10*100&"%)"&" Target"', t: 's' as const }, '', { f: 'C10-C8', t: 'n' as const }, { f: 'IF(C11>0,"Tercapai","Tidak Tercapai")', t: 's' as const }, ''],
+        // Empty row 12
         ['', '', '', '', ''],
-        // Baris 15: Header kedua - NDT + 46% (DINAIKKAN dari baris 14)
-        ['Poin', { f: '="Keterangan (BIT + "&E2*100&"% dan NDT + "&E14*100&"%)"' }, 'Nilai', 'Keterangan', 'Skenario Kenaikan NDT'],
-        // Baris 16: Skenario Kenaikan NDT (DINAIKKAN dari baris 15)
-        [{ f: '=A2'}, { f: '=B2'}, { f: "=SUMIF('1. Hasil'!C2:C10000,\"Perkebunan\",'1. Hasil'!BC2:BC10000)" }, '', 0.46],
-        // Baris 17-21: Data kedua - mengacu ke baris 2-6 (BUKAN 3-7)
-        [{ f: '=A3'}, { f: '=B3'}, { f: "=SUMIF('1. Hasil'!C2:C10000,\"Minerba\",'1. Hasil'!BC2:BC10000)" }, '', ''],
-        [{ f: '=A4'}, { f: '=B4'}, { f: "=SUMIF('1. Hasil'!C2:C10000,\"Perhutanan (HTI)\",'1. Hasil'!BC2:BC10000)" }, '', ''],
-        [{ f: '=A5'}, { f: '=B5'}, { f: "=SUMIF('1. Hasil'!C2:C10000,\"Perhutanan (Hutan Alam)\",'1. Hasil'!BC2:BC10000)" }, '', ''],
-        [{ f: '=A6'}, { f: '=B6'}, { f: "=SUMIF('1. Hasil'!C2:C10000,\"Sektor Lainnya\",'1. Hasil'!BC2:BC10000)" }, '', ''],
-        [{ f: '=A7'}, { f: '=B7'}, { f: '=SUM(C14:C18)' }, '', ''],
-        // Baris 22: Summary kedua (DINAIKKAN dari baris 21)
-        [{ f: '=A8'}, '', { f: '=C8'}, '', ''],
-        // Baris 23: Target kedua (DINAIKKAN dari baris 22)
-        [{ f: '=A9'}, '', { f: '=C19-C20' }, { f: '=IF(C21>0,"Tercapai","Tidak Tercapai")' }, '', ''],
-        // Baris 24: Selisih kedua (DINAIKKAN dari baris 23)
-        [{ f: '=A10'}, 0.95, { f: '=C20*B22' }, '', ''],
-        // Baris kosong
-        [{ f: '=A11'}, '', { f: '=C22-C20' }, { f: '=IF(C27>0,"Tercapai","Tidak Tercapai")' }, '', ''],
+        // Row 13: Second section header
+        ['Poin', { f: '="Keterangan (BIT + "&E2*100&"% dan NDT + "&E14*100&"%)"', t: 's' as const }, 'Nilai', 'Keterangan', 'Skenario Kenaikan NDT'],
+        // Row 14: Second section data starts
+        ['Simulasi Penerimaan PBB 2026', 'Perkebunan', { f: "SUMIF('1. Hasil'!C2:C10000,\"Perkebunan\",'1. Hasil'!BC2:BC10000)", t: 'n' as const }, '', 0.46],
+        ['Simulasi Penerimaan PBB 2026', 'Minerba', { f: "SUMIF('1. Hasil'!C2:C10000,\"Minerba\",'1. Hasil'!BC2:BC10000)", t: 'n' as const }, '', ''],
+        ['Simulasi Penerimaan PBB 2026', 'Perhutanan (HTI)', { f: "SUMIF('1. Hasil'!C2:C10000,\"Perhutanan (HTI)\",'1. Hasil'!BC2:BC10000)", t: 'n' as const }, '', ''],
+        ['Simulasi Penerimaan PBB 2026', 'Perhutanan (Hutan Alam)', { f: "SUMIF('1. Hasil'!C2:C10000,\"Perhutanan (Hutan Alam)\",'1. Hasil'!BC2:BC10000)", t: 'n' as const }, '', ''],
+        ['Simulasi Penerimaan PBB 2026', 'Sektor Lainnya', { f: "SUMIF('1. Hasil'!C2:C10000,\"Sektor Lainnya\",'1. Hasil'!BC2:BC10000)", t: 'n' as const }, '', ''],
+        ['Simulasi Penerimaan PBB 2026 (Collection Rate 100%)', { f: "=(COUNT('1. Hasil'!A2:A10000))&\" NOP\"", t: 's' as const }, { f: 'SUM(C14:C18)', t: 'n' as const }, '', ''],
+        ['Target Penerimaan PBB 2026', '', { f: 'C8', t: 'n' as const }, '', ''],
+        ['Selisih antara Simulasi (Collection Rate 100%) & Target', '', { f: 'C19-C20', t: 'n' as const }, { f: 'IF(C21>0,"Tercapai","Tidak Tercapai")', t: 's' as const }, ''],
+        [{ f: '="Simulasi Penerimaan PBB 2026 (Collection Rate "&B22*100&"%)"', t: 's' as const }, '95%', { f: 'C19*B22', t: 'n' as const }, '', ''],
+        [{ f: '="Selisih antara Simulasi (Collection Rate "&B22*100&"%)"&" Target"', t: 's' as const }, '', { f: 'C22-C20', t: 'n' as const }, { f: 'IF(C23>0,"Tercapai","Tidak Tercapai")', t: 's' as const }, ''],
       ];
       
       const ws2 = XLSX.utils.aoa_to_sheet(kesimpulanData);
       
-      // Format persentase untuk cell E2, B12, B26, E16
-      if (ws2['E2']) ws2['E2'].z = '0.0%';
-      if (ws2['B10']) ws2['B10'].z = '0%';
-      if (ws2['B22']) ws2['B22'].z = '0%';
-      if (ws2['E14']) ws2['E14'].z = '0%';
+      // Apply number formats to Sheet 2
+      // Format E2 and E14 as percentage (10.3% and 46%)
+      ws2['E2'] = { v: 0.103, t: 'n', z: '0.0%' };
+      ws2['E14'] = { v: 0.46, t: 'n', z: '0.0%' };
       
-      // Format number untuk kolom C
-      for (let row = 2; row <= 27; row++) {
-        const cellAddr = `C${row}`;
-        if (ws2[cellAddr] && (ws2[cellAddr].f || typeof ws2[cellAddr].v === 'number')) {
-          ws2[cellAddr].z = '#,##0';
+      // Format C2:C11 and C14:C23 as Comma Style (#,##0)
+      for (let row = 2; row <= 11; row++) {
+        if (ws2[`C${row}`] && ws2[`C${row}`].t === 'n') {
+          ws2[`C${row}`].z = '#,##0';
         }
       }
+      for (let row = 14; row <= 23; row++) {
+        if (ws2[`C${row}`] && ws2[`C${row}`].t === 'n') {
+          ws2[`C${row}`].z = '#,##0';
+        }
+      }
+      
+      // Format B10 and B22 as percentage display (95%)
+      ws2['B10'] = { v: 0.95, t: 'n', z: '0%' };
+      ws2['B22'] = { v: 0.95, t: 'n', z: '0%' };
+      
+      ws2['!cols'] = [
+        { wch: 60 },
+        { wch: 30 },
+        { wch: 25 },
+        { wch: 20 },
+        { wch: 20 }
+      ];
       
       XLSX.utils.book_append_sheet(wb, ws2, '2. Kesimpulan');
 
@@ -669,215 +676,213 @@ export default function App() {
     }
   };
 
-
   return (
     <>
-  {/* Font Imports */}
-  <style>{`
-    @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700&family=Source+Code+Pro:wght@400;500;600&display=swap');
-    
-    :root {
-      --font-heading: 'Playfair Display', serif;
-      --font-body: 'Inter', sans-serif;
-      --font-mono: 'Source Code Pro', monospace;
-    }
-    
-    /* Headings - MongoDB Value Serif (Playfair Display) */
-    h1, h2, h3, h4, h5, h6,
-    .font-heading,
-    [class*=\"CardTitle\"] {
-      font-family: var(--font-heading) !important;
-    }
-    
-    /* Body text - Euclid Circular A (Inter) */
-    body, p, span, div, button, input, label,
-    .font-body {
-      font-family: var(--font-body) !important;
-    }
-    
-    /* Monospace - Source Code Pro */
-    code, pre, .font-mono, .mono {
-      font-family: var(--font-mono) !important;
-    }
-    
-    /* Specific overrides for UI components */
-    .text-3xl, .text-4xl, .font-bold {
-      font-family: var(--font-heading) !important;
-    }
-    
-    button, .button, [role=\"button\"] {
-      font-family: var(--font-body) !important;
-    }
-  `}</style>
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 p-4 md:p-8">
-      <div className="max-w-4xl mx-auto space-y-6">
-        {/* Header */}
-        <div className="text-center space-y-2">
-          <h1 className="text-3xl md:text-4xl font-bold text-slate-900 font-heading">
-            Ekstraktor FDM V5 Sektor Perkebunan
-          </h1>
-          <p className="text-slate-600 font-body">
-            Website ini Tidak Menyimpan File Apapun yang Di-upload dan Diekstrak
-          </p>
-        </div>
-
-        {/* Alert Messages */}
-        {error && (
-          <Alert variant="destructive">
-            <AlertCircle className="w-4 h-4" />
-            <AlertDescription className="font-body">{error}</AlertDescription>
-          </Alert>
-        )}
+      {/* Font Imports */}
+      <style>{`
+        @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700&family=Source+Code+Pro:wght@400;500;600&display=swap');
         
-        {successMessage && (
-          <Alert className="bg-green-50 border-green-200">
-            <CheckCircle className="w-4 h-4 text-green-600" />
-            <AlertDescription className="text-green-800 font-body">{successMessage}</AlertDescription>
-          </Alert>
-        )}
+        :root {
+          --font-heading: 'Playfair Display', serif;
+          --font-body: 'Inter', sans-serif;
+          --font-mono: 'Source Code Pro', monospace;
+        }
+        
+        /* Headings - MongoDB Value Serif (Playfair Display) */
+        h1, h2, h3, h4, h5, h6,
+        .font-heading,
+        [class*="CardTitle"] {
+          font-family: var(--font-heading) !important;
+        }
+        
+        /* Body text - Euclid Circular A (Inter) */
+        body, p, span, div, button, input, label,
+        .font-body {
+          font-family: var(--font-body) !important;
+        }
+        
+        /* Monospace - Source Code Pro */
+        code, pre, .font-mono, .mono {
+          font-family: var(--font-mono) !important;
+        }
+        
+        /* Specific overrides for UI components */
+        .text-3xl, .text-4xl, .font-bold {
+          font-family: var(--font-heading) !important;
+        }
+        
+        button, .button, [role="button"] {
+          font-family: var(--font-body) !important;
+        }
+      `}</style>
+      
+      <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 p-4 md:p-8 font-body">
+        <div className="max-w-4xl mx-auto space-y-6">
+          {/* Header */}
+          <div className="text-center space-y-2">
+            <h1 className="text-3xl md:text-4xl font-bold text-slate-900 font-heading">
+              Ekstraktor FDM V5
+            </h1>
+            <p className="text-slate-600 font-body">
+              Website ini Tidak Menyimpan File Apapun yang Di-upload dan Diekstrak
+            </p>
+          </div>
 
-        {/* Main Card */}
-        <Card className="shadow-lg">
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2 font-heading">
-              <FileSpreadsheet className="w-5 h-5 text-blue-600" />
-              Upload File FDM Versi V5
-            </CardTitle>
-          </CardHeader>
+          {/* Alert Messages */}
+          {error && (
+            <Alert variant="destructive">
+              <AlertCircle className="w-4 h-4" />
+              <AlertDescription className="font-body">{error}</AlertDescription>
+            </Alert>
+          )}
           
-          <CardContent className="space-y-4">
-            {/* Upload Area */}
-            <div
-              className="border-2 border-dashed border-slate-300 rounded-lg p-8 text-center hover:border-blue-500 transition-colors"
-              onDrop={handleDrop}
-              onDragOver={handleDragOver}
-            >
-              <input
-                ref={fileInputRef}
-                type="file"
-                multiple
-                accept=".xlsm,.xlsx,.xls"
-                onChange={handleFileUpload}
-                className="hidden"
-                id="file-upload"
-              />
-              <label htmlFor="file-upload" className="cursor-pointer flex flex-col items-center gap-3">
-                <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center">
-                  <Upload className="w-8 h-8 text-blue-600" />
-                </div>
-                <div>
-                  <p className="font-medium text-slate-900 font-body">
-                    Klik Di Sini untuk Upload File
-                  </p>
-                  <p className="text-sm text-slate-500 font-body">
-                    Pastikan File berupa FDM V5 dalam Format xlsm, xlsx, atau xls
-                  </p>
-                </div>
-                <p className="text-xs text-slate-400 font-body">
-                  Maksimal 50 file
-                </p>
-              </label>
-            </div>
+          {successMessage && (
+            <Alert className="bg-green-50 border-green-200">
+              <CheckCircle className="w-4 h-4 text-green-600" />
+              <AlertDescription className="text-green-800 font-body">{successMessage}</AlertDescription>
+            </Alert>
+          )}
 
-            {/* Progress Bar */}
-            {isExtracting && (
-              <div className="space-y-2">
-                <div className="flex justify-between text-sm font-body">
-                  <span>Memproses file...</span>
-                  <span>{Math.round(extractionProgress)}%</span>
+          {/* Main Card */}
+          <Card className="shadow-lg">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2 font-heading">
+                <FileSpreadsheet className="w-5 h-5 text-blue-600" />
+                Upload File FDM Versi V5
+              </CardTitle>
+            </CardHeader>
+            
+            <CardContent className="space-y-4">
+              {/* Upload Area */}
+              <div 
+                className="border-2 border-dashed border-slate-300 rounded-lg p-8 text-center hover:border-blue-500 transition-colors"
+                onDrop={handleDrop}
+                onDragOver={handleDragOver}
+              >
+                <input
+                  ref={fileInputRef}
+                  type="file"
+                  multiple
+                  accept=".xlsm,.xlsx,.xls"
+                  onChange={handleFileUpload}
+                  className="hidden"
+                  id="file-upload"
+                />
+                <label htmlFor="file-upload" className="cursor-pointer flex flex-col items-center gap-3">
+                  <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center">
+                    <Upload className="w-8 h-8 text-blue-600" />
+                  </div>
+                  <div>
+                    <p className="font-medium text-slate-900 font-body">
+                      Klik Di Sini untuk Upload File
+                    </p>
+                    <p className="text-sm text-slate-500 font-body">
+                      Pastikan File berupa FDM V5 dalam Format xlsm, xlsx, atau xls
+                    </p>
+                  </div>
+                  <p className="text-xs text-slate-400 font-body">
+                    Maksimal 50 file
+                  </p>
+                </label>
+              </div>
+
+              {/* File List */}
+              {uploadedFiles.length > 0 && (
+                <div className="space-y-3">
+                  <div className="flex items-center justify-between">
+                    <h3 className="font-medium text-slate-900 font-heading">
+                      File yang dipilih ({uploadedFiles.length})
+                    </h3>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={clearAllFiles}
+                      className="text-red-600 hover:text-red-700 font-body"
+                    >
+                      <Trash2 className="w-4 h-4 mr-1" />
+                      Hapus Semua
+                    </Button>
+                  </div>
+
+                  <div className="max-h-64 overflow-y-auto space-y-2">
+                    {uploadedFiles.map((fileItem) => (
+                      <div 
+                        key={fileItem.id} 
+                        className="flex items-center justify-between p-3 bg-slate-50 rounded-lg border"
+                      >
+                        <div className="flex items-center gap-3 min-w-0">
+                          <FileSpreadsheet className="w-5 h-5 text-green-600 flex-shrink-0" />
+                          <span className="truncate text-sm font-body">{fileItem.name}</span>
+                        </div>
+                        <div className="flex items-center gap-2 flex-shrink-0">
+                          {fileItem.status === 'pending' && (
+                            <span className="text-xs text-slate-500 font-body">Menunggu untuk Diekstrak</span>
+                          )}
+                          {fileItem.status === 'processing' && (
+                            <RefreshCw className="w-4 h-4 text-blue-600 animate-spin" />
+                          )}
+                          {fileItem.status === 'completed' && (
+                            <CheckCircle className="w-4 h-4 text-green-600" />
+                          )}
+                          {fileItem.status === 'error' && (
+                            <AlertCircle className="w-4 h-4 text-red-600" />
+                          )}
+                          <button 
+                            onClick={() => removeFile(fileItem.id)}
+                            className="p-1 hover:bg-slate-200 rounded"
+                          >
+                            <X className="w-4 h-4 text-slate-500" />
+                          </button>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
                 </div>
-                <Progress value={extractionProgress} className="h-2" /
-              </div>
-            )}
-            {/* File List */}
-            {uploadedFiles.length > 0 && (
-      <div className="space-y-3">
-        <div className="flex items-center justify-between">
-          <h3 className="font-medium text-slate-900 font-heading">
-            File yang dipilih ({uploadedFiles.length})
-          </h3>
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={clearAllFiles}
-            className="text-red-600 hover:text-red-700 font-body"
-          >
-            <Trash2 className="w-4 h-4 mr-1" />
-            Hapus Semua
-          </Button>
-        </div>
-        
-        <div className="max-h-64 overflow-y-auto space-y-2">
-          {uploadedFiles.map((fileItem) => (
-            <div 
-              key={fileItem.id} 
-              className="flex items-center justify-between p-3 bg-slate-50 rounded-lg border"
-            >
-              <div className="flex items-center gap-3 min-w-0">
-                <FileSpreadsheet className="w-5 h-5 text-green-600 flex-shrink-0" />
-                <span className="truncate text-sm font-body">{fileItem.name}</span>
-              </div>
-              <div className="flex items-center gap-2 flex-shrink-0">
-                {fileItem.status === 'pending' && (
-                  <span className="text-xs text-slate-500 font-body">Menunggu untuk Diekstrak</span>
-                )}
-                {fileItem.status === 'processing' && (
-                  <RefreshCw className="w-4 h-4 text-blue-600 animate-spin" />
-                )}
-                {fileItem.status === 'completed' && (
-                  <CheckCircle className="w-4 h-4 text-green-600" />
-                )}
-                {fileItem.status === 'error' && (
-                  <AlertCircle className="w-4 h-4 text-red-600" />
-                )}
-                <button 
-                  onClick={() => removeFile(fileItem.id)}
-                  className="p-1 hover:bg-slate-200 rounded"
+              )}
+
+              {/* Progress Bar */}
+              {isExtracting && (
+                <div className="space-y-2">
+                  <div className="flex justify-between text-sm font-body">
+                    <span>Memproses file...</span>
+                    <span>{Math.round(extractionProgress)}%</span>
+                  </div>
+                  <Progress value={extractionProgress} className="h-2" />
+                </div>
+              )}
+
+              {/* Action Buttons */}
+              <div className="flex gap-3">
+                <Button
+                  onClick={handleExtract}
+                  disabled={isExtracting || uploadedFiles.length === 0}
+                  className="flex-1 bg-blue-600 hover:bg-blue-700 font-body"
                 >
-                  <X className="w-4 h-4 text-slate-500" />
-                </button>
+                  <Play className="w-4 h-4 mr-2" />
+                  {isExtracting ? 'Memproses...' : 'Ekstrak Sekarang'}
+                </Button>
+                
+                {extractionResult && (
+                  <Button
+                    onClick={handleDownload}
+                    variant="outline"
+                    className="flex-1 border-green-600 text-green-600 hover:bg-green-50 font-body"
+                  >
+                    <Download className="w-4 h-4 mr-2" />
+                    Download Hasil
+                  </Button>
+                )}
               </div>
-            </div>
-          ))}
-        </div>
-      </div>
-    )}
-            {/* Hasil Ekstraksi Summary */}
-            {extractionResult && (
-              <div className="mt-8 p-6 bg-green-50 border border-green-200 rounded-xl">
-                <h3 className="text-lg font-semibold text-green-800 mb-4 flex items-center gap-2 font-heading">
-                  <CheckCircle className="h-5 w-5" />
-                  Ringkasan Hasil Ekstraksi
-                </h3>
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                  <div className="bg-white p-4 rounded-lg shadow-sm">
-                    <p className="text-sm text-slate-500">Total File</p>
-                    <p className="text-2xl font-bold text-slate-800">{extractionResult.rows.length}</p>
-                  </div>
-                  <div className="bg-white p-4 rounded-lg shadow-sm">
-                    <p className="text-sm text-slate-500">Total Kolom</p>
-                    <p className="text-2xl font-bold text-slate-800">{extractionResult.headers.length}</p>
-                  </div>
-                  <div className="bg-white p-4 rounded-lg shadow-sm">
-                    <p className="text-sm text-slate-500">Status</p>
-                    <p className="text-lg font-bold text-green-600">Selesai</p>
-                  </div>
-                  <div className="bg-white p-4 rounded-lg shadow-sm">
-                    <p className="text-sm text-slate-500">Output</p>
-                    <p className="text-lg font-bold text-blue-600">Excel</p>
-                  </div>
-                </div>
-              </div>
-            )}
-          </CardContent>
-        </Card>
+            </CardContent>
+          </Card>
 
-        {/* Footer */}
-        <div className="text-center text-sm text-slate-500 font-body">
-          <p>Saran/Masukan: 0822-9411-6001 (Dedek)</p>
-          <p className="mt-1">Update: {new Date().toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' })}</p>
+          {/* Footer */}
+          <div className="text-center text-sm text-slate-500 font-body">
+            <p>Saran/Masukan: 0822-9411-6001 (Dedek)</p>
+            <p className="mt-1">Update: {new Date().toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' })}</p>
+          </div>
         </div>
       </div>
-    </div>
+    </>
   );
 }
