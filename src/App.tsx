@@ -614,10 +614,12 @@ export default function App() {
         ['Target Penerimaan PBB 2026', '', 110289165592, '', ''],
         // Baris 10: Selisih (DINAIKKAN dari baris 9)
         ['Selisih antara Simulasi (Collection Rate 100%) & Target', '', { f: '=C8-C9' }, { f: '=IF(C10>0,"Tercapai","Tidak Tercapai")' }, ''],
-        // Baris 11: Collection Rate 95% (DINAIKKAN dari baris 12)
-        [{ f: '="Simulasi Penerimaan PBB 2026 (Collection Rate "&B10*100&"%)"' }, 0.103, { f: '=C8*B12' }, '', ''],
-        // Baris 12: Selisih 95% (DINAIKKAN dari baris 11)
-        [{ f: '="Selisih antara Simulasi (Collection Rate "&B10*100&"%)"&" Target"', '', { f: '=C12-C9' }, { f: '=IF(C13>0,"Tercapai","Tidak Tercapai")' }, ''],
+        // Baris kosong
+        ['', '', '', '', ''],
+        // Baris 12: Collection Rate 95% (DINAIKKAN dari baris 11)
+        ['Simulasi Penerimaan PBB 2026 (Collection Rate 95%)', 0.95, { f: '=C8*B12' }, '', ''],
+        // Baris 13: Selisih 95% (DINAIKKAN dari baris 12)
+        ['Selisih antara Simulasi (Collection Rate 95%) Target', '', { f: '=C12-C9' }, { f: '=IF(C13>0,"Tercapai","Tidak Tercapai")' }, ''],
         // Baris kosong
         ['', '', '', '', ''],
         // Baris 15: Header kedua - NDT + 46% (DINAIKKAN dari baris 14)
