@@ -617,31 +617,31 @@ export default function App() {
         // Baris 12: Collection Rate 95% (DINAIKKAN dari baris 11)
         [{ f: '="Simulasi Penerimaan PBB 2026 (Collection Rate "&B10*100&"%)"' }, 0.95, { f: '=C7*B10' }, '', ''],
         // Baris 13: Selisih 95% (DINAIKKAN dari baris 12)
-        [{ f: '="Selisih antara Simulasi (Collection Rate "&B10*100"%) & Target"' }, '', { f: '=C10-C8' }, { f: '=IF(C11>0,"Tercapai","Tidak Tercapai")' }, ''],
+        [{ f: '="Selisih antara Simulasi (Collection Rate "&B10*100&"%) & Target"' }, '', { f: '=C10-C8' }, { f: '=IF(C11>0,"Tercapai","Tidak Tercapai")' }, ''],
         // Baris kosong
         ['', '', '', '', ''],
         // Baris 15: Header kedua - NDT + 46% (DINAIKKAN dari baris 14)
-        ['Poin', { f: '="Keterangan (BIT + "&E2*100&"% dan NDT + "&E15*100&"%)"' }, 'Nilai', 'Keterangan', 'Skenario Kenaikan NDT'],
+        ['Poin', { f: '="Keterangan (BIT + "&E2*100&"% dan NDT + "&E14*100&"%)"' }, 'Nilai', 'Keterangan', 'Skenario Kenaikan NDT'],
         // Baris 16: Skenario Kenaikan NDT (DINAIKKAN dari baris 15)
-        ['', '', '', '', 0.46],
+        [{ f: '=A2'}, { f: '=B2'}, { f: "=SUMIF('1. Hasil'!C2:C10000,\"Perkebunan\",'1. Hasil'!BC2:BC10000)" }, '', 0.46],
         // Baris 17-21: Data kedua - mengacu ke baris 2-6 (BUKAN 3-7)
-        ['=A2', '=B2', { f: "=SUMIF('1. Hasil'!C2:C10000,\"Perkebunan\",'1. Hasil'!BC2:BC10000)" }, '', ''],
-        ['=A3', '=B3', { f: "=SUMIF('1. Hasil'!C2:C10000,\"Minerba\",'1. Hasil'!BC2:BC10000)" }, '', ''],
-        ['=A4', '=B4', { f: "=SUMIF('1. Hasil'!C2:C10000,\"Perhutanan (HTI)\",'1. Hasil'!BC2:BC10000)" }, '', ''],
-        ['=A5', '=B5', { f: "=SUMIF('1. Hasil'!C2:C10000,\"Perhutanan (Hutan Alam)\",'1. Hasil'!BC2:BC10000)" }, '', ''],
-        ['=A6', '=B6', { f: "=SUMIF('1. Hasil'!C2:C10000,\"Sektor Lainnya\",'1. Hasil'!BC2:BC10000)" }, '', ''],
+        [{ f: '=A3'}, { f: '=B3'}, { f: "=SUMIF('1. Hasil'!C2:C10000,\"Minerba\",'1. Hasil'!BC2:BC10000)" }, '', ''],
+        [{ f: '=A4'}, { f: '=B4'}, { f: "=SUMIF('1. Hasil'!C2:C10000,\"Perhutanan (HTI)\",'1. Hasil'!BC2:BC10000)" }, '', ''],
+        [{ f: '=A5'}, { f: '=B5'}, { f: "=SUMIF('1. Hasil'!C2:C10000,\"Perhutanan (Hutan Alam)\",'1. Hasil'!BC2:BC10000)" }, '', ''],
+        [{ f: '=A6'}, { f: '=B6'}, { f: "=SUMIF('1. Hasil'!C2:C10000,\"Sektor Lainnya\",'1. Hasil'!BC2:BC10000)" }, '', ''],
+        [{ f: '=A7'}, { f: '=B7'}, { f: '=SUM(C14:C19)' }, '', ''],
         // Baris 22: Summary kedua (DINAIKKAN dari baris 21)
-        ['=A7', '=B7', { f: '=SUM(C17:C21)' }, '', ''],
+        [{ f: '=A8'}, '', { f: '=C8'}, '', ''],
         // Baris 23: Target kedua (DINAIKKAN dari baris 22)
-        ['=A8', '', '=C9', '', ''],
+        [{ f: '=A9'}, '', { f: '=C19-C20' }, { f: '=IF(C20>0,"Tercapai","Tidak Tercapai")' }, '', ''],
         // Baris 24: Selisih kedua (DINAIKKAN dari baris 23)
-        ['=A9', '', { f: '=C22-C23' }, { f: '=IF(C24>0,"Tercapai","Tidak Tercapai")' }, ''],
+        ['', '', '', '', ''],
         // Baris kosong
         ['', '', '', '', ''],
         // Baris 26: Collection Rate 95% kedua (DINAIKKAN dari baris 25)
-        ['Simulasi Penerimaan PBB 2026 (Collection Rate 95%)', 0.95, { f: '=C22*B26' }, '', ''],
+        [{ f: '=A10'}, 0.95, { f: '=C22*B26' }, '', ''],
         // Baris 27: Selisih 95% kedua (DINAIKKAN dari baris 26)
-        ['Selisih antara Simulasi (Collection Rate 95%) Target', '', { f: '=C26-C23' }, { f: '=IF(C27>0,"Tercapai","Tidak Tercapai")' }, ''],
+        [{ f: '=A11'}, '', { f: '=C22-C20' }, { f: '=IF(C27>0,"Tercapai","Tidak Tercapai")' }, ''],
       ];
       
       const ws2 = XLSX.utils.aoa_to_sheet(kesimpulanData);
