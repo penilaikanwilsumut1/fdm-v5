@@ -435,13 +435,13 @@ export default function App() {
       rowFormulas["TOTAL NJOP (TANAH + BANGUNAN) 2025"] = `=${col("JUMLAH NJOP BUMI (Rp) pada A. DATA BUMI")}${excelRow}+${col("Jumlah NJOP BANGUNAN pada B. DATA BANGUNAN")}${excelRow}`;
 
       // SPPT 2025 = ((AV - 12000000) * 40%) * 0.5%
-      rowFormulas["SPPT 2025"] = `=(${col("TOTAL NJOP (TANAH + BANGUNAN) 2025")}${excelRow}-12000000)*40%*5%`;
+      rowFormulas["SPPT 2025"] = `=(${col("TOTAL NJOP (TANAH + BANGUNAN) 2025")}${excelRow}-12000000)*40%*0.5%`;
 
       // SIMULASI TOTAL NJOP (TANAH + BANGUNAN) 2026 (Hanya Kenaikan BIT 10,3% + NDT Tetap)
       rowFormulas["SIMULASI TOTAL NJOP (TANAH + BANGUNAN) 2026 (Hanya Kenaikan BIT 10,3% + NDT Tetap)"] = `=ROUND((${col("NJOP Bumi Berupa Tanah (Rp)")}${excelRow}+${col("NJOP Bumi Berupa Pengembangan Tanah (Rp) (Kenaikan BIT 10.3%)")}${excelRow})/${col("Areal Produktif")}${excelRow},0)*${col("Luas Bumi Areal Produktif (m²)")}${excelRow}+${col("NJOP BUMI (Rp) AREAL BELUM PRODUKTIF pada A. DATA BUMI")}${excelRow}+${col("NJOP BUMI (Rp) AREAL TIDAK PRODUKTIF pada A. DATA BUMI")}${excelRow}+${col("NJOP BUMI (Rp) AREAL PENGAMAN pada A. DATA BUMI")}${excelRow}+${col("NJOP BUMI (Rp) AREAL EMPLASEMEN pada A. DATA BUMI")}${excelRow}+${col("Jumlah NJOP BANGUNAN pada B. DATA BANGUNAN")}${excelRow}`;
 
       // SIMULASI SPPT 2026 (Hanya Kenaikan BIT 10,3% + NDT Tetap)
-      rowFormulas["SIMULASI SPPT 2026 (Hanya Kenaikan BIT 10,3% + NDT Tetap)"] = `=(${col("SIMULASI TOTAL NJOP (TANAH + BANGUNAN) 2026 (Hanya Kenaikan BIT 10,3% + NDT Tetap)")}${excelRow}-12000000)*40%*5%`;
+      rowFormulas["SIMULASI SPPT 2026 (Hanya Kenaikan BIT 10,3% + NDT Tetap)"] = `=(${col("SIMULASI TOTAL NJOP (TANAH + BANGUNAN) 2026 (Hanya Kenaikan BIT 10,3% + NDT Tetap)")}${excelRow}-12000000)*40%*0.5%`;
 
       // Kenaikan = AY - AW
       rowFormulas["Kenaikan"] = `=${col("SIMULASI SPPT 2026 (Hanya Kenaikan BIT 10,3% + NDT Tetap)")}${excelRow}-${col("SPPT 2025")}${excelRow}`;
@@ -453,7 +453,7 @@ export default function App() {
       rowFormulas["SIMULASI TOTAL NJOP (TANAH + BANGUNAN) 2026 (Kenaikan BIT 10,3% + NDT 46%)"] = `=${col("NJOP BUMI (Rp) AREA PRODUKTIF pada A. DATA BUMI (Proyeksi NDT Naik 46%)")}${excelRow}+${col("NJOP BUMI (Rp) AREAL BELUM PRODUKTIF pada A. DATA BUMI (Proyeksi NDT Naik 46%)")}${excelRow}+${col("NJOP BUMI (Rp) AREAL TIDAK PRODUKTIF pada A. DATA BUMI (Proyeksi NDT Naik 46%)")}${excelRow}+${col("NJOP BUMI (Rp) AREAL PENGAMAN pada A. DATA BUMI (Proyeksi NDT Naik 46%)")}${excelRow}+${col("NJOP BUMI (Rp) AREAL EMPLASEMEN pada A. DATA BUMI (Proyeksi NDT Naik 46%)")}${excelRow}+${col("Jumlah NJOP BANGUNAN pada B. DATA BANGUNAN")}${excelRow}`;
 
       // SIMULASI SPPT 2026 (Kenaikan BIT 10,3% + NDT 46%)
-      rowFormulas["SIMULASI SPPT 2026 (Kenaikan BIT 10,3% + NDT 46%)"] = `=(${col("SIMULASI TOTAL NJOP (TANAH + BANGUNAN) 2026 (Kenaikan BIT 10,3% + NDT 46%)")}${excelRow}-12000000)*40%*5%`;
+      rowFormulas["SIMULASI SPPT 2026 (Kenaikan BIT 10,3% + NDT 46%)"] = `=(${col("SIMULASI TOTAL NJOP (TANAH + BANGUNAN) 2026 (Kenaikan BIT 10,3% + NDT 46%)")}${excelRow}-12000000)*40%*0.5%`;
 
       formulasByRow[rowIdx] = rowFormulas;
     }
