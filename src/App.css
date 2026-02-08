@@ -1,0 +1,126 @@
+/* Custom styles for Ekstraktor FDM */
+
+/* Smooth scrolling */
+html {
+  scroll-behavior: smooth;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f5f9;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #94a3b8;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #64748b;
+}
+
+/* Animation for progress bar */
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.7;
+  }
+}
+
+.animate-pulse-slow {
+  animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+/* File list hover effect */
+.file-row {
+  transition: background-color 0.2s ease;
+}
+
+.file-row:hover {
+  background-color: #f8fafc;
+}
+
+/* Button hover effects */
+.btn-hover-lift {
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.btn-hover-lift:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+/* Drop zone animation */
+.drop-zone {
+  transition: all 0.3s ease;
+}
+
+.drop-zone.drag-over {
+  background-color: #dbeafe;
+  border-color: #3b82f6;
+  transform: scale(1.02);
+}
+
+/* Status badge animations */
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.animate-spin {
+  animation: spin 1s linear infinite;
+}
+
+/* Card shadow enhancement */
+.card-shadow {
+  box-shadow: 
+    0 4px 6px -1px rgba(0, 0, 0, 0.1),
+    0 2px 4px -1px rgba(0, 0, 0, 0.06),
+    0 10px 15px -3px rgba(0, 0, 0, 0.05);
+}
+
+/* Gradient text */
+.gradient-text {
+  background: linear-gradient(135deg, #1e40af 0%, #3b82f6 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .main-card {
+    margin: 0 -1rem;
+    border-radius: 0;
+  }
+  
+  .button-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Focus styles for accessibility */
+button:focus-visible,
+input:focus-visible {
+  outline: 2px solid #3b82f6;
+  outline-offset: 2px;
+}
+
+/* Print styles */
+@media print {
+  .no-print {
+    display: none !important;
+  }
+}
