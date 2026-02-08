@@ -613,11 +613,11 @@ export default function App() {
         // Baris 9: Target (DINAIKKAN dari baris 8)
         ['Target Penerimaan PBB 2026', '', 110289165592, '', ''],
         // Baris 10: Selisih (DINAIKKAN dari baris 9)
-        ['Selisih antara Simulasi (Collection Rate 100%) & Target', '', { f: '=C7-C8' }, { f: '=IF(C10>0,"Tercapai","Tidak Tercapai")' }, ''],
+        ['Selisih antara Simulasi (Collection Rate 100%) & Target', '', { f: '=C7-C8' }, { f: '=IF(C9>0,"Tercapai","Tidak Tercapai")' }, ''],
         // Baris 12: Collection Rate 95% (DINAIKKAN dari baris 11)
-        ['Simulasi Penerimaan PBB 2026 (Collection Rate 95%)', 0.95, { f: '=C8*B12' }, '', ''],
+        ['Simulasi Penerimaan PBB 2026 (Collection Rate 95%)', 0.95, { f: '=C7*B10' }, '', ''],
         // Baris 13: Selisih 95% (DINAIKKAN dari baris 12)
-        ['Selisih antara Simulasi (Collection Rate 95%) Target', '', { f: '=C12-C9' }, { f: '=IF(C13>0,"Tercapai","Tidak Tercapai")' }, ''],
+        ['Selisih antara Simulasi (Collection Rate 95%) Target', '', { f: '=C10-C8' }, { f: '=IF(C11>0,"Tercapai","Tidak Tercapai")' }, ''],
         // Baris kosong
         ['', '', '', '', ''],
         // Baris 15: Header kedua - NDT + 46% (DINAIKKAN dari baris 14)
@@ -648,9 +648,9 @@ export default function App() {
       
       // Format persentase untuk cell E2, B12, B26, E16
       if (ws2['E2']) ws2['E2'].z = '0.00%';
-      if (ws2['B12']) ws2['B12'].z = '0%';
-      if (ws2['B26']) ws2['B26'].z = '0%';
-      if (ws2['E16']) ws2['E16'].z = '0%';
+      if (ws2['B10']) ws2['B10'].z = '0.00%';
+      if (ws2['B24']) ws2['B24'].z = '0.00%';
+      if (ws2['E14']) ws2['E14'].z = '0.00%';
       
       // Format number untuk kolom C
       for (let row = 2; row <= 27; row++) {
