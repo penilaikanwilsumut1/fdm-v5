@@ -129,7 +129,7 @@ export default function App() {
     if (nameHint === "N/A") return null;
     const nameHintLower = nameHint.toLowerCase();
     const sheetMap: Record<string, string> = {};
-    wb.SheetNames.forEach(name => {
+    wb.SheetNames.forEach((name: string) => {
       sheetMap[name.toLowerCase()] = name;
     });
     
@@ -597,45 +597,52 @@ export default function App() {
       
       XLSX.utils.book_append_sheet(wb, ws1, '1. Hasil');
 
-      // Sheet 2: Kesimpulan - DENGAN ISIAN A1-D2 YANG SUDAH DITAMBAHKAN
+      // Sheet 2: Kesimpulan - DENGAN ISIAN A2, B2, C2 YANG SUDAH DITAMBAHKAN
       const kesimpulanData = [
         // Baris 1: Header utama
         ['Poin', { f: '="Keterangan (BIT + "&\'2. Kesimpulan\'!$E$2*100&"% dan NDT Tetap)"' }, 'Nilai', 'Keterangan', 'Skenario Kenaikan BIT'],
-        // Baris 2: Skenario Kenaikan BIT
-        ['', '', '', '', 0.103],
-        // Baris 3: Data Simulasi Penerimaan PBB 2026
-        ['Simulasi Penerimaan PBB 2026', 'Perkebunan', { f: "=SUMIF('1. Hasil'!C2:C10000,\"Perkebunan\",'1. Hasil'!AY2:AY10000)" }, '', ''],
+        // Baris 2: Isian A2, B2, C2 sudah ditambahkan
+        ['Simulasi Penerimaan PBB 2026', { f: '="Perkebunan (BIT + "&\'2. Kesimpulan\'!$E$2*100&"% dan NDT Tetap)"' }, { f: "=SUMIF('1. Hasil'!C2:C10000,\"Perkebunan\",'1. Hasil'!AY2:AY10000)" }, '', 0.103],
+        // Baris 3-7: Data Simulasi (DINAIKKAN dari baris 2-6)
         ['Simulasi Penerimaan PBB 2026', 'Minerba', { f: "=SUMIF('1. Hasil'!C2:C10000,\"Minerba\",'1. Hasil'!AY2:AY10000)" }, '', ''],
         ['Simulasi Penerimaan PBB 2026', 'Perhutanan (HTI)', { f: "=SUMIF('1. Hasil'!C2:C10000,\"Perhutanan (HTI)\",'1. Hasil'!AY2:AY10000)" }, '', ''],
         ['Simulasi Penerimaan PBB 2026', 'Perhutanan (Hutan Alam)', { f: "=SUMIF('1. Hasil'!C2:C10000,\"Perhutanan (Hutan Alam)\",'1. Hasil'!AY2:AY10000)" }, '', ''],
         ['Simulasi Penerimaan PBB 2026', 'Sektor Lainnya', { f: "=SUMIF('1. Hasil'!C2:C10000,\"Sektor Lainnya\",'1. Hasil'!AY2:AY10000)" }, '', ''],
-        ['Simulasi Penerimaan PBB 2026 (Collection Rate 100%)', { f: '=(COUNT(\'1. Hasil\'!A2:A10000))&" NOP"' }, { f: '=SUM(C3:C7)' }, '', ''],
+        // Baris 8: Collection Rate 100% (DINAIKKAN dari baris 7)
+        ['Simulasi Penerimaan PBB 2026 (Collection Rate 100%)', { f: '=(COUNT(\'1. Hasil\'!A2:A10000))&" NOP"' }, { f: '=SUM(C2:C6)' }, '', ''],
+        // Baris 9: Target (DINAIKKAN dari baris 8)
         ['Target Penerimaan PBB 2026', '', 110289165592, '', ''],
+        // Baris 10: Selisih (DINAIKKAN dari baris 9)
         ['Selisih antara Simulasi (Collection Rate 100%) & Target', '', { f: '=C8-C9' }, { f: '=IF(C10>0,"Tercapai","Tidak Tercapai")' }, ''],
         // Baris kosong
         ['', '', '', '', ''],
-        // Collection Rate 95%
+        // Baris 12: Collection Rate 95% (DINAIKKAN dari baris 11)
         ['Simulasi Penerimaan PBB 2026 (Collection Rate 95%)', 0.95, { f: '=C8*B12' }, '', ''],
+        // Baris 13: Selisih 95% (DINAIKKAN dari baris 12)
         ['Selisih antara Simulasi (Collection Rate 95%) Target', '', { f: '=C12-C9' }, { f: '=IF(C13>0,"Tercapai","Tidak Tercapai")' }, ''],
         // Baris kosong
         ['', '', '', '', ''],
-        // Header kedua - NDT + 46%
-        ['Poin', { f: '="Keterangan (BIT + "&\'2. Kesimpulan\'!$E$2*100&"% dan NDT + "&\'2. Kesimpulan\'!$E$16*100&"%)"' }, 'Nilai', 'Keterangan', 'Skenario Kenaikan NDT'],
-        // Skenario Kenaikan NDT
+        // Baris 15: Header kedua - NDT + 46% (DINAIKKAN dari baris 14)
+        ['Poin', { f: '="Keterangan (BIT + "&\'2. Kesimpulan\'!$E$2*100&"% dan NDT + "&\'2. Kesimpulan\'!$E$15*100&"%)"' }, 'Nilai', 'Keterangan', 'Skenario Kenaikan NDT'],
+        // Baris 16: Skenario Kenaikan NDT (DINAIKKAN dari baris 15)
         ['', '', '', '', 0.46],
-        // Data kedua - mengacu ke baris 3-7
-        ['=A3', '=B3', { f: "=SUMIF('1. Hasil'!C2:C10000,\"Perkebunan\",'1. Hasil'!BC2:BC10000)" }, '', ''],
-        ['=A4', '=B4', { f: "=SUMIF('1. Hasil'!C2:C10000,\"Minerba\",'1. Hasil'!BC2:BC10000)" }, '', ''],
-        ['=A5', '=B5', { f: "=SUMIF('1. Hasil'!C2:C10000,\"Perhutanan (HTI)\",'1. Hasil'!BC2:BC10000)" }, '', ''],
-        ['=A6', '=B6', { f: "=SUMIF('1. Hasil'!C2:C10000,\"Perhutanan (Hutan Alam)\",'1. Hasil'!BC2:BC10000)" }, '', ''],
-        ['=A7', '=B7', { f: "=SUMIF('1. Hasil'!C2:C10000,\"Sektor Lainnya\",'1. Hasil'!BC2:BC10000)" }, '', ''],
-        ['=A8', '=B8', { f: '=SUM(C17:C21)' }, '', ''],
-        ['=A9', '', '=C9', '', ''],
-        ['=A10', '', { f: '=C22-C23' }, { f: '=IF(C24>0,"Tercapai","Tidak Tercapai")' }, ''],
+        // Baris 17-21: Data kedua - mengacu ke baris 2-6 (BUKAN 3-7)
+        ['=A2', '=B2', { f: "=SUMIF('1. Hasil'!C2:C10000,\"Perkebunan\",'1. Hasil'!BC2:BC10000)" }, '', ''],
+        ['=A3', '=B3', { f: "=SUMIF('1. Hasil'!C2:C10000,\"Minerba\",'1. Hasil'!BC2:BC10000)" }, '', ''],
+        ['=A4', '=B4', { f: "=SUMIF('1. Hasil'!C2:C10000,\"Perhutanan (HTI)\",'1. Hasil'!BC2:BC10000)" }, '', ''],
+        ['=A5', '=B5', { f: "=SUMIF('1. Hasil'!C2:C10000,\"Perhutanan (Hutan Alam)\",'1. Hasil'!BC2:BC10000)" }, '', ''],
+        ['=A6', '=B6', { f: "=SUMIF('1. Hasil'!C2:C10000,\"Sektor Lainnya\",'1. Hasil'!BC2:BC10000)" }, '', ''],
+        // Baris 22: Summary kedua (DINAIKKAN dari baris 21)
+        ['=A7', '=B7', { f: '=SUM(C17:C21)' }, '', ''],
+        // Baris 23: Target kedua (DINAIKKAN dari baris 22)
+        ['=A8', '', '=C9', '', ''],
+        // Baris 24: Selisih kedua (DINAIKKAN dari baris 23)
+        ['=A9', '', { f: '=C22-C23' }, { f: '=IF(C24>0,"Tercapai","Tidak Tercapai")' }, ''],
         // Baris kosong
         ['', '', '', '', ''],
-        // Collection Rate 95% bagian kedua
+        // Baris 26: Collection Rate 95% kedua (DINAIKKAN dari baris 25)
         ['Simulasi Penerimaan PBB 2026 (Collection Rate 95%)', 0.95, { f: '=C22*B26' }, '', ''],
+        // Baris 27: Selisih 95% kedua (DINAIKKAN dari baris 26)
         ['Selisih antara Simulasi (Collection Rate 95%) Target', '', { f: '=C26-C23' }, { f: '=IF(C27>0,"Tercapai","Tidak Tercapai")' }, ''],
       ];
       
@@ -648,7 +655,7 @@ export default function App() {
       if (ws2['E16']) ws2['E16'].z = '0%';
       
       // Format number untuk kolom C
-      for (let row = 3; row <= 27; row++) {
+      for (let row = 2; row <= 27; row++) {
         const cellAddr = `C${row}`;
         if (ws2[cellAddr] && (ws2[cellAddr].f || typeof ws2[cellAddr].v === 'number')) {
           ws2[cellAddr].z = '#,##0';
