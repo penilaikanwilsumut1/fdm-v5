@@ -615,9 +615,9 @@ export default function App() {
         // Baris 10: Selisih (DINAIKKAN dari baris 9)
         ['Selisih antara Simulasi (Collection Rate 100%) & Target', '', { f: '=C7-C8' }, { f: '=IF(C9>0,"Tercapai","Tidak Tercapai")' }, ''],
         // Baris 12: Collection Rate 95% (DINAIKKAN dari baris 11)
-        ['Simulasi Penerimaan PBB 2026 (Collection Rate 95%)', 0.95, { f: '=C7*B10' }, '', ''],
+        [{ f: '="Simulasi Penerimaan PBB 2026 (Collection Rate "&B10*100&"%)"' }, 0.95, { f: '=C7*B10' }, '', ''],
         // Baris 13: Selisih 95% (DINAIKKAN dari baris 12)
-        ['Selisih antara Simulasi (Collection Rate 95%) Target', '', { f: '=C10-C8' }, { f: '=IF(C11>0,"Tercapai","Tidak Tercapai")' }, ''],
+        [{ f: '="Selisih antara Simulasi (Collection Rate "&B10*100"%) & Target"' }, '', { f: '=C10-C8' }, { f: '=IF(C11>0,"Tercapai","Tidak Tercapai")' }, ''],
         // Baris kosong
         ['', '', '', '', ''],
         // Baris 15: Header kedua - NDT + 46% (DINAIKKAN dari baris 14)
@@ -647,10 +647,10 @@ export default function App() {
       const ws2 = XLSX.utils.aoa_to_sheet(kesimpulanData);
       
       // Format persentase untuk cell E2, B12, B26, E16
-      if (ws2['E2']) ws2['E2'].z = '0.00%';
-      if (ws2['B10']) ws2['B10'].z = '0.00%';
-      if (ws2['B24']) ws2['B24'].z = '0.00%';
-      if (ws2['E14']) ws2['E14'].z = '0.00%';
+      if (ws2['E2']) ws2['E2'].z = '0.0%';
+      if (ws2['B10']) ws2['B10'].z = '0%';
+      if (ws2['B24']) ws2['B24'].z = '0%';
+      if (ws2['E14']) ws2['E14'].z = '0%';
       
       // Format number untuk kolom C
       for (let row = 2; row <= 27; row++) {
