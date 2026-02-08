@@ -684,11 +684,11 @@ export default function App() {
       <div className="max-w-6xl mx-auto">
         {/* Header */}
         <div className="text-center mb-8">
-          <h1 className="text-3xl md:text-4xl font-bold text-slate-800 mb-2">
-            Ekstraktor FDM
+          <h1 className="text-3xl md:text-4xl font-bold text-slate-800 mb-2 font-heading">
+            Ekstraktor FDM V5 Sektor Perkebunan
           </h1>
-          <p className="text-slate-600">
-            Ekstraksi data dari file FDM (Formulir Data Maklumat) dengan mudah dan cepat
+          <p className="text-slate-600 font-body">
+            Website ini Tidak Menyimpan File Apapun yang Di-upload dan Diekstrak
           </p>
         </div>
 
@@ -710,7 +710,7 @@ export default function App() {
         {/* Main Card */}
         <Card className="shadow-xl border-0">
           <CardHeader className="bg-gradient-to-r from-blue-600 to-blue-700 text-white rounded-t-lg">
-            <CardTitle className="text-xl font-semibold flex items-center gap-2">
+            <CardTitle className="text-xl font-semibold flex items-center gap-2 font-heading">
               <FileSpreadsheet className="h-6 w-6" />
               Panel Ekstraksi FDM
             </CardTitle>
@@ -807,7 +807,7 @@ export default function App() {
             {uploadedFiles.length > 0 && (
               <div className="mt-6">
                 <div className="flex justify-between items-center mb-4">
-                  <h3 className="text-lg font-semibold text-slate-700">
+                  <h3 className="text-lg font-semibold text-slate-700 font-heading">
                     Daftar File ({uploadedFiles.length})
                   </h3>
                   <Button
@@ -891,7 +891,7 @@ export default function App() {
             {/* Hasil Ekstraksi Summary */}
             {extractionResult && (
               <div className="mt-8 p-6 bg-green-50 border border-green-200 rounded-xl">
-                <h3 className="text-lg font-semibold text-green-800 mb-4 flex items-center gap-2">
+                <h3 className="text-lg font-semibold text-green-800 mb-4 flex items-center gap-2 font-heading">
                   <CheckCircle className="h-5 w-5" />
                   Ringkasan Hasil Ekstraksi
                 </h3>
@@ -921,11 +921,10 @@ export default function App() {
         {/* Footer */}
         <div className="mt-8 text-center text-sm text-slate-500">
           <p>
-            <strong>Privasi Terjamin:</strong> File yang diupload tidak disimpan di server.
-            Semua proses dilakukan di browser Anda.
+            <strong>Saran/Masukan: 0822-9411-6001 (Dedek)
           </p>
           <p className="mt-2">
-            Ekstraktor FDM V5 &copy; {new Date().getFullYear()}
+            Update: 8 Februari 2026
           </p>
         </div>
       </div>
