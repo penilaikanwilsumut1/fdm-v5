@@ -600,9 +600,9 @@ export default function App() {
       // Sheet 2: Kesimpulan - DENGAN ISIAN A2, B2, C2 YANG SUDAH DITAMBAHKAN
       const kesimpulanData = [
         // Baris 1: Header utama
-        ['Poin', { f: '="Keterangan (BIT + "&\'2. Kesimpulan\'!$E$2*100&"% dan NDT Tetap)"' }, 'Nilai', 'Keterangan', 'Skenario Kenaikan BIT'],
+        ['Poin', { f: '="Keterangan (BIT + "&E2*100&"% dan NDT Tetap)"' }, 'Nilai', 'Keterangan', 'Skenario Kenaikan BIT'],
         // Baris 2: Isian A2, B2, C2 sudah ditambahkan
-        ['Simulasi Penerimaan PBB 2026', { f: '="Perkebunan (BIT + "&\'2. Kesimpulan\'!$E$2*100&"% dan NDT Tetap)"' }, { f: "=SUMIF('1. Hasil'!C2:C10000,\"Perkebunan\",'1. Hasil'!AY2:AY10000)" }, '', 0.103],
+        ['Simulasi Penerimaan PBB 2026', 'Perkebunan', { f: "=SUMIF('1. Hasil'!C2:C10000,\"Perkebunan\",'1. Hasil'!AY2:AY10000)" }, '', 0.103],
         // Baris 3-7: Data Simulasi (DINAIKKAN dari baris 2-6)
         ['Simulasi Penerimaan PBB 2026', 'Minerba', { f: "=SUMIF('1. Hasil'!C2:C10000,\"Minerba\",'1. Hasil'!AY2:AY10000)" }, '', ''],
         ['Simulasi Penerimaan PBB 2026', 'Perhutanan (HTI)', { f: "=SUMIF('1. Hasil'!C2:C10000,\"Perhutanan (HTI)\",'1. Hasil'!AY2:AY10000)" }, '', ''],
@@ -614,16 +614,14 @@ export default function App() {
         ['Target Penerimaan PBB 2026', '', 110289165592, '', ''],
         // Baris 10: Selisih (DINAIKKAN dari baris 9)
         ['Selisih antara Simulasi (Collection Rate 100%) & Target', '', { f: '=C8-C9' }, { f: '=IF(C10>0,"Tercapai","Tidak Tercapai")' }, ''],
-        // Baris kosong
-        ['', '', '', '', ''],
-        // Baris 12: Collection Rate 95% (DINAIKKAN dari baris 11)
-        ['Simulasi Penerimaan PBB 2026 (Collection Rate 95%)', 0.95, { f: '=C8*B12' }, '', ''],
-        // Baris 13: Selisih 95% (DINAIKKAN dari baris 12)
-        ['Selisih antara Simulasi (Collection Rate 95%) Target', '', { f: '=C12-C9' }, { f: '=IF(C13>0,"Tercapai","Tidak Tercapai")' }, ''],
+        // Baris 11: Collection Rate 95% (DINAIKKAN dari baris 12)
+        [{ f: '="Simulasi Penerimaan PBB 2026 (Collection Rate "&B10*100&"%)"' }, 0.103, { f: '=C8*B12' }, '', ''],
+        // Baris 12: Selisih 95% (DINAIKKAN dari baris 11)
+        [{ f: '="Selisih antara Simulasi (Collection Rate "&B10*100&"%)"&" Target"', '', { f: '=C12-C9' }, { f: '=IF(C13>0,"Tercapai","Tidak Tercapai")' }, ''],
         // Baris kosong
         ['', '', '', '', ''],
         // Baris 15: Header kedua - NDT + 46% (DINAIKKAN dari baris 14)
-        ['Poin', { f: '="Keterangan (BIT + "&\'2. Kesimpulan\'!$E$2*100&"% dan NDT + "&\'2. Kesimpulan\'!$E$15*100&"%)"' }, 'Nilai', 'Keterangan', 'Skenario Kenaikan NDT'],
+        ['Poin', { f: '="Keterangan (BIT + "&E2*100&"% dan NDT + "&E15*100&"%)"' }, 'Nilai', 'Keterangan', 'Skenario Kenaikan NDT'],
         // Baris 16: Skenario Kenaikan NDT (DINAIKKAN dari baris 15)
         ['', '', '', '', 0.46],
         // Baris 17-21: Data kedua - mengacu ke baris 2-6 (BUKAN 3-7)
