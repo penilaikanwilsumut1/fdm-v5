@@ -396,22 +396,22 @@ export default function App() {
       // Rumus tambahan yang diperlukan
 
       // NJOP Bumi Berupa Pengembangan Tanah (Rp) (Kenaikan BIT 10.3%) = U * 1.103
-      rowFormulas["NJOP Bumi Berupa Pengembangan Tanah (Rp) (Kenaikan BIT 10.3%)"] = `=${col("NJOP Bumi Berupa Pengembangan Tanah (Rp)")}${excelRow}*1.103`;
+      rowFormulas["NJOP Bumi Berupa Pengembangan Tanah (Rp) (Kenaikan BIT 10.3%)"] = `=${col("NJOP Bumi Berupa Pengembangan Tanah (Rp)")}${excelRow}*'2. Kesimpulan'!$E$2)`;
 
       // NJOP BUMI (Rp) AREA PRODUKTIF pada A. DATA BUMI (Proyeksi NDT Naik 46%)
       rowFormulas["NJOP BUMI (Rp) AREA PRODUKTIF pada A. DATA BUMI (Proyeksi NDT Naik 46%)"] = `=ROUND((${col("NJOP Bumi Berupa Tanah (Rp)")}${excelRow}+${col("NJOP Bumi Berupa Pengembangan Tanah (Rp) (Kenaikan BIT 10.3%)")}${excelRow})/${col("Areal Produktif")}${excelRow},0)*${col("Luas Bumi Areal Produktif (m²)")}${excelRow}`;
 
       // NJOP BUMI (Rp) AREAL BELUM PRODUKTIF pada A. DATA BUMI (Proyeksi NDT Naik 46%) = AB * 1.46
-      rowFormulas["NJOP BUMI (Rp) AREAL BELUM PRODUKTIF pada A. DATA BUMI (Proyeksi NDT Naik 46%)"] = `=${col("NJOP BUMI (Rp) AREAL BELUM PRODUKTIF pada A. DATA BUMI")}${excelRow}*1.46`;
+      rowFormulas["NJOP BUMI (Rp) AREAL BELUM PRODUKTIF pada A. DATA BUMI (Proyeksi NDT Naik 46%)"] = `=${col("NJOP BUMI (Rp) AREAL BELUM PRODUKTIF pada A. DATA BUMI")}${excelRow}*'2. Kesimpulan'!$E$14)`;
 
       // NJOP BUMI (Rp) AREAL TIDAK PRODUKTIF pada A. DATA BUMI (Proyeksi NDT Naik 46%) = AF * 1.46
-      rowFormulas["NJOP BUMI (Rp) AREAL TIDAK PRODUKTIF pada A. DATA BUMI (Proyeksi NDT Naik 46%)"] = `=${col("NJOP BUMI (Rp) AREAL TIDAK PRODUKTIF pada A. DATA BUMI")}${excelRow}*1.46`;
+      rowFormulas["NJOP BUMI (Rp) AREAL TIDAK PRODUKTIF pada A. DATA BUMI (Proyeksi NDT Naik 46%)"] = `=${col("NJOP BUMI (Rp) AREAL TIDAK PRODUKTIF pada A. DATA BUMI")}${excelRow}*'2. Kesimpulan'!$E$14)`;
 
       // NJOP BUMI (Rp) AREAL PENGAMAN pada A. DATA BUMI = AH * AI
       rowFormulas["NJOP BUMI (Rp) AREAL PENGAMAN pada A. DATA BUMI"] = `=${col("Areal Pengaman (Copy)")}${excelRow}*${col("NJOP/M Areal Pengaman")}${excelRow}`;
 
       // NJOP BUMI (Rp) AREAL PENGAMAN pada A. DATA BUMI (Proyeksi NDT Naik 46%) = AJ * 1.46
-      rowFormulas["NJOP BUMI (Rp) AREAL PENGAMAN pada A. DATA BUMI (Proyeksi NDT Naik 46%)"] = `=${col("NJOP BUMI (Rp) AREAL PENGAMAN pada A. DATA BUMI")}${excelRow}*1.46`;
+      rowFormulas["NJOP BUMI (Rp) AREAL PENGAMAN pada A. DATA BUMI (Proyeksi NDT Naik 46%)"] = `=${col("NJOP BUMI (Rp) AREAL PENGAMAN pada A. DATA BUMI")}${excelRow}*'2. Kesimpulan'!$E$14)`;
 
       // Areal Emplasemen (Copy) = Q
       rowFormulas["Areal Emplasemen (Copy)"] = `=${col("Areal Emplasemen")}${excelRow}`;
@@ -420,7 +420,7 @@ export default function App() {
       rowFormulas["NJOP BUMI (Rp) AREAL EMPLASEMEN pada A. DATA BUMI"] = `=${col("Areal Emplasemen (Copy)")}${excelRow}*${col("NJOP/M Areal Emplasemen")}${excelRow}`;
 
       // NJOP BUMI (Rp) AREAL EMPLASEMEN pada A. DATA BUMI (Proyeksi NDT Naik 46%) = AN * 1.46
-      rowFormulas["NJOP BUMI (Rp) AREAL EMPLASEMEN pada A. DATA BUMI (Proyeksi NDT Naik 46%)"] = `=${col("NJOP BUMI (Rp) AREAL EMPLASEMEN pada A. DATA BUMI")}${excelRow}*1.46`;
+      rowFormulas["NJOP BUMI (Rp) AREAL EMPLASEMEN pada A. DATA BUMI (Proyeksi NDT Naik 46%)"] = `=${col("NJOP BUMI (Rp) AREAL EMPLASEMEN pada A. DATA BUMI")}${excelRow}*'2. Kesimpulan'!$E$14)`;
 
       // JUMLAH Luas (m2) pada A. DATA BUMI = J (LUAS BUMI)
       rowFormulas["JUMLAH Luas (m2) pada A. DATA BUMI"] = `=${col("LUAS BUMI")}${excelRow}`;
@@ -633,7 +633,7 @@ export default function App() {
         // Baris 22: Summary kedua (DINAIKKAN dari baris 21)
         [{ f: '=A8'}, '', { f: '=C8'}, '', ''],
         // Baris 23: Target kedua (DINAIKKAN dari baris 22)
-        [{ f: '=A9'}, '', { f: '=C19-C20' }, { f: '=IF(C20>0,"Tercapai","Tidak Tercapai")' }, '', ''],
+        [{ f: '=A9'}, '', { f: '=C19-C20' }, { f: '=IF(C21>0,"Tercapai","Tidak Tercapai")' }, '', ''],
         // Baris 24: Selisih kedua (DINAIKKAN dari baris 23)
         [{ f: '=A10'}, 0.95, { f: '=C20*B22' }, '', ''],
         // Baris kosong
@@ -645,7 +645,7 @@ export default function App() {
       // Format persentase untuk cell E2, B12, B26, E16
       if (ws2['E2']) ws2['E2'].z = '0.0%';
       if (ws2['B10']) ws2['B10'].z = '0%';
-      if (ws2['B24']) ws2['B24'].z = '0%';
+      if (ws2['B22']) ws2['B22'].z = '0%';
       if (ws2['E14']) ws2['E14'].z = '0%';
       
       // Format number untuk kolom C
