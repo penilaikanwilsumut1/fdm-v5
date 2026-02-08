@@ -629,19 +629,15 @@ export default function App() {
         [{ f: '=A4'}, { f: '=B4'}, { f: "=SUMIF('1. Hasil'!C2:C10000,\"Perhutanan (HTI)\",'1. Hasil'!BC2:BC10000)" }, '', ''],
         [{ f: '=A5'}, { f: '=B5'}, { f: "=SUMIF('1. Hasil'!C2:C10000,\"Perhutanan (Hutan Alam)\",'1. Hasil'!BC2:BC10000)" }, '', ''],
         [{ f: '=A6'}, { f: '=B6'}, { f: "=SUMIF('1. Hasil'!C2:C10000,\"Sektor Lainnya\",'1. Hasil'!BC2:BC10000)" }, '', ''],
-        [{ f: '=A7'}, { f: '=B7'}, { f: '=SUM(C14:C19)' }, '', ''],
+        [{ f: '=A7'}, { f: '=B7'}, { f: '=SUM(C14:C18)' }, '', ''],
         // Baris 22: Summary kedua (DINAIKKAN dari baris 21)
         [{ f: '=A8'}, '', { f: '=C8'}, '', ''],
         // Baris 23: Target kedua (DINAIKKAN dari baris 22)
         [{ f: '=A9'}, '', { f: '=C19-C20' }, { f: '=IF(C20>0,"Tercapai","Tidak Tercapai")' }, '', ''],
         // Baris 24: Selisih kedua (DINAIKKAN dari baris 23)
-        ['', '', '', '', ''],
+        [{ f: '=A10'}, 0.95, { f: '=C20*B22' }, '', ''],
         // Baris kosong
-        ['', '', '', '', ''],
-        // Baris 26: Collection Rate 95% kedua (DINAIKKAN dari baris 25)
-        [{ f: '=A10'}, 0.95, { f: '=C22*B26' }, '', ''],
-        // Baris 27: Selisih 95% kedua (DINAIKKAN dari baris 26)
-        [{ f: '=A11'}, '', { f: '=C22-C20' }, { f: '=IF(C27>0,"Tercapai","Tidak Tercapai")' }, ''],
+        [{ f: '=A11'}, '', { f: '=C22-C20' }, { f: '=IF(C27>0,"Tercapai","Tidak Tercapai")' }, '', ''],
       ];
       
       const ws2 = XLSX.utils.aoa_to_sheet(kesimpulanData);
