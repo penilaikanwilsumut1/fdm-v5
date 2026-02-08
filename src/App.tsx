@@ -10,9 +10,9 @@ import {
   RefreshCw, 
   FileSpreadsheet, 
   CheckCircle, 
-  XCircle,
   AlertCircle,
-  Trash2
+  Trash2,
+  X
 } from 'lucide-react';
 import * as XLSX from 'xlsx';
 import './App.css';
@@ -680,255 +680,212 @@ export default function App() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 p-4 md:p-8">
-      <div className="max-w-6xl mx-auto">
-        {/* Header */}
-        <div className="text-center mb-8">
-          <h1 className="text-3xl md:text-4xl font-bold text-slate-800 mb-2 font-heading">
-            Ekstraktor FDM V5 Sektor Perkebunan
-          </h1>
-          <p className="text-slate-600 font-body">
-            Website ini Tidak Menyimpan File Apapun yang Di-upload dan Diekstrak
-          </p>
-        </div>
-
-        {/* Alert Messages */}
-        {error && (
-          <Alert variant="destructive" className="mb-6">
-            <AlertCircle className="h-4 w-4" />
-            <AlertDescription>{error}</AlertDescription>
-          </Alert>
-        )}
+    <>
+      {/* Font Imports */}
+      <style>{`
+        @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700&family=Source+Code+Pro:wght@400;500;600&display=swap');
         
-        {successMessage && (
-          <Alert className="mb-6 bg-green-50 border-green-200 text-green-800">
-            <CheckCircle className="h-4 w-4 text-green-600" />
-            <AlertDescription>{successMessage}</AlertDescription>
-          </Alert>
-        )}
+        :root {
+          --font-heading: 'Playfair Display', serif;
+          --font-body: 'Inter', sans-serif;
+          --font-mono: 'Source Code Pro', monospace;
+        }
+        
+        /* Headings - MongoDB Value Serif (Playfair Display) */
+        h1, h2, h3, h4, h5, h6,
+        .font-heading,
+        [class*="CardTitle"] {
+          font-family: var(--font-heading) !important;
+        }
+        
+        /* Body text - Euclid Circular A (Inter) */
+        body, p, span, div, button, input, label,
+        .font-body {
+          font-family: var(--font-body) !important;
+        }
+        
+        /* Monospace - Source Code Pro */
+        code, pre, .font-mono, .mono {
+          font-family: var(--font-mono) !important;
+        }
+        
+        /* Specific overrides for UI components */
+        .text-3xl, .text-4xl, .font-bold {
+          font-family: var(--font-heading) !important;
+        }
+        
+        button, .button, [role="button"] {
+          font-family: var(--font-body) !important;
+        }
+      `}</style>
+      
+      <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 p-4 md:p-8 font-body">
+        <div className="max-w-4xl mx-auto space-y-6">
+          {/* Header */}
+          <div className="text-center space-y-2">
+            <h1 className="text-3xl md:text-4xl font-bold text-slate-900 font-heading">
+              Ekstraktor FDM V5
+            </h1>
+            <p className="text-slate-600 font-body">
+              Website ini Tidak Menyimpan File Apapun yang Di-upload dan Diekstrak
+            </p>
+          </div>
 
-        {/* Main Card */}
-        <Card className="shadow-xl border-0">
-          <CardHeader className="bg-gradient-to-r from-blue-600 to-blue-700 text-white rounded-t-lg">
-            <CardTitle className="text-xl font-semibold flex items-center gap-2 font-heading">
-              <FileSpreadsheet className="h-6 w-6" />
-              Panel Ekstraksi FDM
-            </CardTitle>
-          </CardHeader>
+          {/* Alert Messages */}
+          {error && (
+            <Alert variant="destructive">
+              <AlertCircle className="w-4 h-4" />
+              <AlertDescription className="font-body">{error}</AlertDescription>
+            </Alert>
+          )}
           
-          <CardContent className="p-6">
-            {/* Tombol Utama */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
-              <Button
-                onClick={() => fileInputRef.current?.click()}
-                className="h-16 flex flex-col items-center justify-center gap-2 bg-blue-600 hover:bg-blue-700"
-                disabled={isExtracting}
-              >
-                <Upload className="h-6 w-6" />
-                <span className="font-semibold">Upload FDM</span>
-                <span className="text-xs opacity-80">Max 50 file</span>
-              </Button>
+          {successMessage && (
+            <Alert className="bg-green-50 border-green-200">
+              <CheckCircle className="w-4 h-4 text-green-600" />
+              <AlertDescription className="text-green-800 font-body">{successMessage}</AlertDescription>
+            </Alert>
+          )}
 
-              <Button
-                onClick={handleExtract}
-                disabled={isExtracting || uploadedFiles.length === 0}
-                className="h-16 flex flex-col items-center justify-center gap-2 bg-green-600 hover:bg-green-700 disabled:bg-slate-300"
-              >
-                <Play className="h-6 w-6" />
-                <span className="font-semibold">Ekstrak Sekarang</span>
-                <span className="text-xs opacity-80">
-                  {uploadedFiles.length > 0 ? `${uploadedFiles.length} file` : 'Belum ada file'}
-                </span>
-              </Button>
-
-              <Button
-                onClick={handleDownload}
-                disabled={!extractionResult || isExtracting}
-                className="h-16 flex flex-col items-center justify-center gap-2 bg-purple-600 hover:bg-purple-700 disabled:bg-slate-300"
-              >
-                <Download className="h-6 w-6" />
-                <span className="font-semibold">Download Ulang</span>
-                <span className="text-xs opacity-80">Hasil Ekstraksi</span>
-              </Button>
-
-              <Button
-                onClick={handleNewExtraction}
-                disabled={isExtracting}
-                className="h-16 flex flex-col items-center justify-center gap-2 bg-orange-600 hover:bg-orange-700 disabled:bg-slate-300"
-              >
-                <RefreshCw className="h-6 w-6" />
-                <span className="font-semibold">Ekstraksi FDM Lain</span>
-                <span className="text-xs opacity-80">Mulai Baru</span>
-              </Button>
-            </div>
-
-            <input
-              ref={fileInputRef}
-              type="file"
-              multiple
-              accept=".xlsm,.xlsx,.xls"
-              onChange={handleFileUpload}
-              className="hidden"
-            />
-
-            {/* Drop Zone */}
-            {uploadedFiles.length === 0 && !isExtracting && (
-              <div
+          {/* Main Card */}
+          <Card className="shadow-lg">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2 font-heading">
+                <FileSpreadsheet className="w-5 h-5 text-blue-600" />
+                Upload File FDM Versi V5
+              </CardTitle>
+            </CardHeader>
+            
+            <CardContent className="space-y-4">
+              {/* Upload Area */}
+              <div 
+                className="border-2 border-dashed border-slate-300 rounded-lg p-8 text-center hover:border-blue-500 transition-colors"
                 onDrop={handleDrop}
                 onDragOver={handleDragOver}
-                className="border-3 border-dashed border-blue-300 rounded-xl p-12 text-center bg-blue-50 hover:bg-blue-100 transition-colors cursor-pointer"
-                onClick={() => fileInputRef.current?.click()}
               >
-                <Upload className="h-16 w-16 mx-auto text-blue-400 mb-4" />
-                <h3 className="text-lg font-semibold text-slate-700 mb-2">
-                  Drag & Drop File FDM di sini
-                </h3>
-                <p className="text-slate-500 mb-4">
-                  atau klik untuk memilih file
-                </p>
-                <p className="text-sm text-slate-400">
-                  Format yang didukung: .xlsm, .xlsx, .xls (Max 50 file)
-                </p>
+                <input
+                  ref={fileInputRef}
+                  type="file"
+                  multiple
+                  accept=".xlsm,.xlsx,.xls"
+                  onChange={handleFileUpload}
+                  className="hidden"
+                  id="file-upload"
+                />
+                <label htmlFor="file-upload" className="cursor-pointer flex flex-col items-center gap-3">
+                  <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center">
+                    <Upload className="w-8 h-8 text-blue-600" />
+                  </div>
+                  <div>
+                    <p className="font-medium text-slate-900 font-body">
+                      Klik Di Sini untuk Upload File
+                    </p>
+                    <p className="text-sm text-slate-500 font-body">
+                      Pastikan File berupa FDM V5 dalam Format xlsm, xlsx, atau xls
+                    </p>
+                  </div>
+                  <p className="text-xs text-slate-400 font-body">
+                    Maksimal 50 file
+                  </p>
+                </label>
               </div>
-            )}
 
-            {/* Progress Bar */}
-            {isExtracting && (
-              <div className="mb-6">
-                <div className="flex justify-between mb-2">
-                  <span className="text-sm font-medium text-slate-700">Sedang mengekstrak...</span>
-                  <span className="text-sm font-medium text-slate-700">{extractionProgress}%</span>
+              {/* File List */}
+              {uploadedFiles.length > 0 && (
+                <div className="space-y-3">
+                  <div className="flex items-center justify-between">
+                    <h3 className="font-medium text-slate-900 font-heading">
+                      File yang dipilih ({uploadedFiles.length})
+                    </h3>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={clearAllFiles}
+                      className="text-red-600 hover:text-red-700 font-body"
+                    >
+                      <Trash2 className="w-4 h-4 mr-1" />
+                      Hapus Semua
+                    </Button>
+                  </div>
+
+                  <div className="max-h-64 overflow-y-auto space-y-2">
+                    {uploadedFiles.map((fileItem) => (
+                      <div 
+                        key={fileItem.id} 
+                        className="flex items-center justify-between p-3 bg-slate-50 rounded-lg border"
+                      >
+                        <div className="flex items-center gap-3 min-w-0">
+                          <FileSpreadsheet className="w-5 h-5 text-green-600 flex-shrink-0" />
+                          <span className="truncate text-sm font-body">{fileItem.name}</span>
+                        </div>
+                        <div className="flex items-center gap-2 flex-shrink-0">
+                          {fileItem.status === 'pending' && (
+                            <span className="text-xs text-slate-500 font-body">Menunggu untuk Diekstrak</span>
+                          )}
+                          {fileItem.status === 'processing' && (
+                            <RefreshCw className="w-4 h-4 text-blue-600 animate-spin" />
+                          )}
+                          {fileItem.status === 'completed' && (
+                            <CheckCircle className="w-4 h-4 text-green-600" />
+                          )}
+                          {fileItem.status === 'error' && (
+                            <AlertCircle className="w-4 h-4 text-red-600" />
+                          )}
+                          <button 
+                            onClick={() => removeFile(fileItem.id)}
+                            className="p-1 hover:bg-slate-200 rounded"
+                          >
+                            <X className="w-4 h-4 text-slate-500" />
+                          </button>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
                 </div>
-                <Progress value={extractionProgress} className="h-3" />
-              </div>
-            )}
+              )}
 
-            {/* File List */}
-            {uploadedFiles.length > 0 && (
-              <div className="mt-6">
-                <div className="flex justify-between items-center mb-4">
-                  <h3 className="text-lg font-semibold text-slate-700 font-heading">
-                    Daftar File ({uploadedFiles.length})
-                  </h3>
+              {/* Progress Bar */}
+              {isExtracting && (
+                <div className="space-y-2">
+                  <div className="flex justify-between text-sm font-body">
+                    <span>Memproses file...</span>
+                    <span>{Math.round(extractionProgress)}%</span>
+                  </div>
+                  <Progress value={extractionProgress} className="h-2" />
+                </div>
+              )}
+
+              {/* Action Buttons */}
+              <div className="flex gap-3">
+                <Button
+                  onClick={handleExtract}
+                  disabled={isExtracting || uploadedFiles.length === 0}
+                  className="flex-1 bg-blue-600 hover:bg-blue-700 font-body"
+                >
+                  <Play className="w-4 h-4 mr-2" />
+                  {isExtracting ? 'Memproses...' : 'Ekstrak Sekarang'}
+                </Button>
+                
+                {extractionResult && (
                   <Button
+                    onClick={handleDownload}
                     variant="outline"
-                    size="sm"
-                    onClick={clearAllFiles}
-                    disabled={isExtracting}
-                    className="text-red-600 border-red-300 hover:bg-red-50"
+                    className="flex-1 border-green-600 text-green-600 hover:bg-green-50 font-body"
                   >
-                    <Trash2 className="h-4 w-4 mr-1" />
-                    Hapus Semua
+                    <Download className="w-4 h-4 mr-2" />
+                    Download Hasil
                   </Button>
-                </div>
-
-                <div className="max-h-96 overflow-y-auto border rounded-lg">
-                  <table className="w-full">
-                    <thead className="bg-slate-100 sticky top-0">
-                      <tr>
-                        <th className="px-4 py-3 text-left text-sm font-semibold text-slate-700">No</th>
-                        <th className="px-4 py-3 text-left text-sm font-semibold text-slate-700">Nama File</th>
-                        <th className="px-4 py-3 text-center text-sm font-semibold text-slate-700">Status</th>
-                        <th className="px-4 py-3 text-center text-sm font-semibold text-slate-700">Aksi</th>
-                      </tr>
-                    </thead>
-                    <tbody className="divide-y">
-                      {uploadedFiles.map((file, index) => (
-                        <tr key={file.id} className="hover:bg-slate-50">
-                          <td className="px-4 py-3 text-sm text-slate-600">{index + 1}</td>
-                          <td className="px-4 py-3 text-sm text-slate-800">
-                            <div className="flex items-center gap-2">
-                              <FileSpreadsheet className="h-4 w-4 text-green-600" />
-                              <span className="truncate max-w-xs" title={file.name}>
-                                {file.name}
-                              </span>
-                            </div>
-                          </td>
-                          <td className="px-4 py-3 text-center">
-                            {file.status === 'pending' && (
-                              <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-slate-100 text-slate-600">
-                                Menunggu
-                              </span>
-                            )}
-                            {file.status === 'processing' && (
-                              <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-600">
-                                <RefreshCw className="h-3 w-3 mr-1 animate-spin" />
-                                Proses
-                              </span>
-                            )}
-                            {file.status === 'completed' && (
-                              <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-600">
-                                <CheckCircle className="h-3 w-3 mr-1" />
-                                Selesai
-                              </span>
-                            )}
-                            {file.status === 'error' && (
-                              <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-red-100 text-red-600">
-                                <XCircle className="h-3 w-3 mr-1" />
-                                Error
-                              </span>
-                            )}
-                          </td>
-                          <td className="px-4 py-3 text-center">
-                            <Button
-                              variant="ghost"
-                              size="sm"
-                              onClick={() => removeFile(file.id)}
-                              disabled={isExtracting}
-                              className="text-red-600 hover:bg-red-50"
-                            >
-                              <Trash2 className="h-4 w-4" />
-                            </Button>
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
+                )}
               </div>
-            )}
+            </CardContent>
+          </Card>
 
-            {/* Hasil Ekstraksi Summary */}
-            {extractionResult && (
-              <div className="mt-8 p-6 bg-green-50 border border-green-200 rounded-xl">
-                <h3 className="text-lg font-semibold text-green-800 mb-4 flex items-center gap-2 font-heading">
-                  <CheckCircle className="h-5 w-5" />
-                  Ringkasan Hasil Ekstraksi
-                </h3>
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                  <div className="bg-white p-4 rounded-lg shadow-sm">
-                    <p className="text-sm text-slate-500">Total File</p>
-                    <p className="text-2xl font-bold text-slate-800">{extractionResult.rows.length}</p>
-                  </div>
-                  <div className="bg-white p-4 rounded-lg shadow-sm">
-                    <p className="text-sm text-slate-500">Total Kolom</p>
-                    <p className="text-2xl font-bold text-slate-800">{extractionResult.headers.length}</p>
-                  </div>
-                  <div className="bg-white p-4 rounded-lg shadow-sm">
-                    <p className="text-sm text-slate-500">Status</p>
-                    <p className="text-lg font-bold text-green-600">Selesai</p>
-                  </div>
-                  <div className="bg-white p-4 rounded-lg shadow-sm">
-                    <p className="text-sm text-slate-500">Output</p>
-                    <p className="text-lg font-bold text-blue-600">Excel</p>
-                  </div>
-                </div>
-              </div>
-            )}
-          </CardContent>
-        </Card>
-
-        {/* Footer */}
-        <div className="mt-8 text-center text-sm text-slate-500">
-          <p>
-            <strong>Privasi Terjamin:</strong> File yang diupload tidak disimpan di server.
-            Semua proses dilakukan di browser Anda.
-          </p>
-          <p className="mt-2">
-            Ekstraktor FDM V5 &copy; {new Date().getFullYear()}
-          </p>
+          {/* Footer */}
+          <div className="text-center text-sm text-slate-500 font-body">
+            <p>Saran/Masukan: 0822-9411-6001 (Dedek)</p>
+            <p className="mt-1">Update: {new Date().toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' })}</p>
+          </div>
         </div>
       </div>
-    </div>
+    </>
   );
 }
