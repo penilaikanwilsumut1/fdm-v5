@@ -382,7 +382,7 @@ const findDynamicColG = (ws: XLSX.WorkSheet, keyword: string): number | string |
       rowFormulas["Luas Bumi Areal Produktif (m²)"] = `=${col("Areal Produktif")}${excelRow}`;
 
       // 6. NJOP Bumi Per M2 Areal Produktif (Rp/m2) (kolom Y) = W / X
-      rowFormulas["NJOP Bumi Per M2 Areal Produktif (Rp/m2)"] = `=${col("NJOP Bumi Areal Produktif (Rp)")}${excelRow}/${col("Luas Bumi Areal Produktif (m²)")}${excelRow}`;
+      rowFormulas["NJOP Bumi Per M2 Areal Produktif (Rp/m2)"] = `=IF(${col("Luas Bumi Areal Produktif (m²)")}${excelRow}=0,0,${col("NJOP Bumi Areal Produktif (Rp)")}${excelRow}/${col("Luas Bumi Areal Produktif (m²)")}${excelRow})`;
 
       // 7. NJOP BUMI (Rp) AREA PRODUKTIF pada A. DATA BUMI (kolom Z) = X * Y
       rowFormulas["NJOP BUMI (Rp) AREA PRODUKTIF pada A. DATA BUMI"] = `=${col("Luas Bumi Areal Produktif (m²)")}${excelRow}*${col("NJOP Bumi Per M2 Areal Produktif (Rp/m2)")}${excelRow}`;
@@ -402,7 +402,7 @@ const findDynamicColG = (ws: XLSX.WorkSheet, keyword: string): number | string |
       rowFormulas["NJOP Bumi Berupa Pengembangan Tanah (Rp) (Kenaikan BIT 10.3%)"] = `=${col("NJOP Bumi Berupa Pengembangan Tanah (Rp)")}${excelRow}*(1+'2. Kesimpulan'!$E$2)`;
 
       // NJOP BUMI (Rp) AREA PRODUKTIF pada A. DATA BUMI (Proyeksi NDT Naik 46%)
-      rowFormulas["NJOP BUMI (Rp) AREA PRODUKTIF pada A. DATA BUMI (Proyeksi NDT Naik 46%)"] = `=ROUND((${col("NJOP Bumi Berupa Tanah (Rp)")}${excelRow}+${col("NJOP Bumi Berupa Pengembangan Tanah (Rp) (Kenaikan BIT 10.3%)")}${excelRow})/${col("Areal Produktif")}${excelRow},0)*${col("Luas Bumi Areal Produktif (m²)")}${excelRow}`;
+      rowFormulas["NJOP BUMI (Rp) AREA PRODUKTIF pada A. DATA BUMI (Proyeksi NDT Naik 46%)"] = `=IF(${col("Areal Produktif")}${excelRow}=0,0,ROUND((${col("NJOP Bumi Berupa Tanah (Rp)")}${excelRow}+${col("NJOP Bumi Berupa Pengembangan Tanah (Rp) (Kenaikan BIT 10.3%)")}${excelRow})/${col("Areal Produktif")}${excelRow},0)*${col("Luas Bumi Areal Produktif (m²)")}${excelRow})`;
 
       // NJOP BUMI (Rp) AREAL BELUM PRODUKTIF pada A. DATA BUMI (Proyeksi NDT Naik 46%) = AB * 1.46
       rowFormulas["NJOP BUMI (Rp) AREAL BELUM PRODUKTIF pada A. DATA BUMI (Proyeksi NDT Naik 46%)"] = `=${col("NJOP BUMI (Rp) AREAL BELUM PRODUKTIF pada A. DATA BUMI")}${excelRow}*(1+'2. Kesimpulan'!$E$14)`;
@@ -441,7 +441,7 @@ const findDynamicColG = (ws: XLSX.WorkSheet, keyword: string): number | string |
       rowFormulas["SPPT 2025"] = `=(${col("TOTAL NJOP (TANAH + BANGUNAN) 2025")}${excelRow}-12000000)*40%*0.5%`;
 
       // SIMULASI TOTAL NJOP (TANAH + BANGUNAN) 2026 (Hanya Kenaikan BIT 10,3% + NDT Tetap)
-      rowFormulas["SIMULASI TOTAL NJOP (TANAH + BANGUNAN) 2026 (Hanya Kenaikan BIT 10,3% + NDT Tetap)"] = `=ROUND((${col("NJOP Bumi Berupa Tanah (Rp)")}${excelRow}+${col("NJOP Bumi Berupa Pengembangan Tanah (Rp) (Kenaikan BIT 10.3%)")}${excelRow})/${col("Areal Produktif")}${excelRow},0)*${col("Luas Bumi Areal Produktif (m²)")}${excelRow}+${col("NJOP BUMI (Rp) AREAL BELUM PRODUKTIF pada A. DATA BUMI")}${excelRow}+${col("NJOP BUMI (Rp) AREAL TIDAK PRODUKTIF pada A. DATA BUMI")}${excelRow}+${col("NJOP BUMI (Rp) AREAL PENGAMAN pada A. DATA BUMI")}${excelRow}+${col("NJOP BUMI (Rp) AREAL EMPLASEMEN pada A. DATA BUMI")}${excelRow}+${col("Jumlah NJOP BANGUNAN pada B. DATA BANGUNAN")}${excelRow}`;
+      rowFormulas["SIMULASI TOTAL NJOP (TANAH + BANGUNAN) 2026 (Hanya Kenaikan BIT 10,3% + NDT Tetap)"] = `=IF(${col("Areal Produktif")}${excelRow}=0,0,ROUND((${col("NJOP Bumi Berupa Tanah (Rp)")}${excelRow}+${col("NJOP Bumi Berupa Pengembangan Tanah (Rp) (Kenaikan BIT 10.3%)")}${excelRow})/${col("Areal Produktif")}${excelRow},0)*${col("Luas Bumi Areal Produktif (m²)")}${excelRow})+${col("NJOP BUMI (Rp) AREAL BELUM PRODUKTIF pada A. DATA BUMI")}${excelRow}+${col("NJOP BUMI (Rp) AREAL TIDAK PRODUKTIF pada A. DATA BUMI")}${excelRow}+${col("NJOP BUMI (Rp) AREAL PENGAMAN pada A. DATA BUMI")}${excelRow}+${col("NJOP BUMI (Rp) AREAL EMPLASEMEN pada A. DATA BUMI")}${excelRow}+${col("Jumlah NJOP BANGUNAN pada B. DATA BANGUNAN")}${excelRow}`;
 
       // SIMULASI SPPT 2026 (Hanya Kenaikan BIT 10,3% + NDT Tetap)
       rowFormulas["SIMULASI SPPT 2026 (Hanya Kenaikan BIT 10,3% + NDT Tetap)"] = `=(${col("SIMULASI TOTAL NJOP (TANAH + BANGUNAN) 2026 (Hanya Kenaikan BIT 10,3% + NDT Tetap)")}${excelRow}-12000000)*40%*0.5%`;
@@ -450,7 +450,7 @@ const findDynamicColG = (ws: XLSX.WorkSheet, keyword: string): number | string |
       rowFormulas["Kenaikan"] = `=${col("SIMULASI SPPT 2026 (Hanya Kenaikan BIT 10,3% + NDT Tetap)")}${excelRow}-${col("SPPT 2025")}${excelRow}`;
 
       // Persentase = AZ / AW
-      rowFormulas["Persentase"] = `=${col("Kenaikan")}${excelRow}/${col("SPPT 2025")}${excelRow}`;
+      rowFormulas["Persentase"] = `=IF(${col("SPPT 2025")}${excelRow}=0,0,${col("Kenaikan")}${excelRow}/${col("SPPT 2025")}${excelRow})`;
 
       // SIMULASI TOTAL NJOP (TANAH + BANGUNAN) 2026 (Kenaikan BIT 10,3% + NDT 46%)
       rowFormulas["SIMULASI TOTAL NJOP (TANAH + BANGUNAN) 2026 (Kenaikan BIT 10,3% + NDT 46%)"] = `=${col("NJOP BUMI (Rp) AREA PRODUKTIF pada A. DATA BUMI (Proyeksi NDT Naik 46%)")}${excelRow}+${col("NJOP BUMI (Rp) AREAL BELUM PRODUKTIF pada A. DATA BUMI (Proyeksi NDT Naik 46%)")}${excelRow}+${col("NJOP BUMI (Rp) AREAL TIDAK PRODUKTIF pada A. DATA BUMI (Proyeksi NDT Naik 46%)")}${excelRow}+${col("NJOP BUMI (Rp) AREAL PENGAMAN pada A. DATA BUMI (Proyeksi NDT Naik 46%)")}${excelRow}+${col("NJOP BUMI (Rp) AREAL EMPLASEMEN pada A. DATA BUMI (Proyeksi NDT Naik 46%)")}${excelRow}+${col("Jumlah NJOP BANGUNAN pada B. DATA BANGUNAN")}${excelRow}`;
