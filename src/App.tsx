@@ -172,26 +172,29 @@ export default function App() {
     return null;
   };
 
-  // Fungsi untuk pencarian dinamis kolom G
-  const findDynamicColG = (ws: XLSX.WorkSheet, keyword: string): number | string | null => {
-    const range = XLSX.utils.decode_range(ws['!ref'] || 'A1');
-    const keywordLower = keyword.toLowerCase();
-    for (let row = 0; row <= range.e.r; row++) {
-      for (let col = 0; col <= 4; col++) {
-        const cellAddr = XLSX.utils.encode_cell({ r: row, c: col });
-        const cell = ws[cellAddr];
-        if (cell && cell.v && typeof cell.v === 'string') {
-          const cellText = cell.v.toLowerCase().replace(/\s+/g, ' ');
-          if (cellText.includes(keywordLower)) {
-            const colGAddr = XLSX.utils.encode_cell({ r: row, c: 6 });
-            const colGCell = ws[colGAddr];
-            return colGCell && colGCell.v !== undefined ? colGCell.v : null;
-          }
+// Fungsi untuk pencarian dinamis kolom G
+const findDynamicColG = (ws: XLSX.WorkSheet, keyword: string): number | string | null => {
+  const range = XLSX.utils.decode_range(ws['!ref'] || 'A1');
+  const keywordLower = keyword.toLowerCase();
+  
+  // Cari di seluruh baris sheet (tanpa batasan 150 baris)
+  for (let row = 0; row <= range.e.r; row++) {
+    // Cari di kolom A-E (0-4) seperti sebelumnya
+    for (let col = 0; col <= 4; col++) {
+      const cellAddr = XLSX.utils.encode_cell({ r: row, c: col });
+      const cell = ws[cellAddr];
+      if (cell && cell.v && typeof cell.v === 'string') {
+        const cellText = cell.v.toLowerCase().replace(/\s+/g, ' ');
+        if (cellText.includes(keywordLower)) {
+          const colGAddr = XLSX.utils.encode_cell({ r: row, c: 6 });
+          const colGCell = ws[colGAddr];
+          return colGCell && colGCell.v !== undefined ? colGCell.v : null;
         }
       }
     }
-    return "TIDAK DITEMUKAN";
-  };
+  }
+  return "TIDAK DITEMUKAN";
+};
 
   // Handle file upload
   const handleFileUpload = useCallback((event: React.ChangeEvent<HTMLInputElement>) => {
