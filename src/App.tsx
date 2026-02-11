@@ -500,7 +500,7 @@ const findDynamicColG = (ws: XLSX.WorkSheet, keyword: string): number | string |
           ));
         }
 
-        setExtractionProgress(Math.round(((i + 1) / uploadedFiles.length) * 500));
+        setExtractionProgress(Math.round(((i + 1) / uploadedFiles.length) * 100));
       }
 
       // Generate formulas untuk setiap baris
