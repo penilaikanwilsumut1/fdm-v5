@@ -210,8 +210,8 @@ const findDynamicColG = (ws: XLSX.WorkSheet, keyword: string): number | string |
       return;
     }
 
-    if (excelFiles.length > 50) {
-      setError('Maksimal 50 file dapat diupload sekaligus');
+    if (excelFiles.length > 100) {
+      setError('Maksimal 100 file dapat diupload sekaligus');
       return;
     }
 
@@ -243,8 +243,8 @@ const findDynamicColG = (ws: XLSX.WorkSheet, keyword: string): number | string |
       return;
     }
 
-    if (uploadedFiles.length + excelFiles.length > 50) {
-      setError('Total file tidak boleh lebih dari 50');
+    if (uploadedFiles.length + excelFiles.length > 100) {
+      setError('Total file tidak boleh lebih dari 100');
       return;
     }
 
@@ -784,7 +784,7 @@ const findDynamicColG = (ws: XLSX.WorkSheet, keyword: string): number | string |
                     </p>
                   </div>
                   <p className="text-xs text-slate-400 font-body">
-                    Maksimal 50 file
+                    Maksimal 100 file
                   </p>
                 </label>
               </div>
