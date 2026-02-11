@@ -176,7 +176,7 @@ export default function App() {
   const findDynamicColG = (ws: XLSX.WorkSheet, keyword: string): number | string | null => {
     const range = XLSX.utils.decode_range(ws['!ref'] || 'A1');
     const keywordLower = keyword.toLowerCase();
-    for (let row = 0; row <= Math.min(150, range.e.r); row++) {
+    for (let row = 0; row <= range.e.r; row++) {
       for (let col = 0; col <= 4; col++) {
         const cellAddr = XLSX.utils.encode_cell({ r: row, c: col });
         const cell = ws[cellAddr];
