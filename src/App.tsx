@@ -210,8 +210,8 @@ const findDynamicColG = (ws: XLSX.WorkSheet, keyword: string): number | string |
       return;
     }
 
-    if (excelFiles.length > 200) {
-      setError('Maksimal 200 file dapat diupload sekaligus');
+    if (excelFiles.length > 500) {
+      setError('Maksimal 500 file dapat diupload sekaligus');
       return;
     }
 
@@ -243,8 +243,8 @@ const findDynamicColG = (ws: XLSX.WorkSheet, keyword: string): number | string |
       return;
     }
 
-    if (uploadedFiles.length + excelFiles.length > 200) {
-      setError('Total file tidak boleh lebih dari 200');
+    if (uploadedFiles.length + excelFiles.length > 500) {
+      setError('Total file tidak boleh lebih dari 500');
       return;
     }
 
@@ -500,7 +500,7 @@ const findDynamicColG = (ws: XLSX.WorkSheet, keyword: string): number | string |
           ));
         }
 
-        setExtractionProgress(Math.round(((i + 1) / uploadedFiles.length) * 200));
+        setExtractionProgress(Math.round(((i + 1) / uploadedFiles.length) * 500));
       }
 
       // Generate formulas untuk setiap baris
@@ -784,7 +784,7 @@ const findDynamicColG = (ws: XLSX.WorkSheet, keyword: string): number | string |
                     </p>
                   </div>
                   <p className="text-xs text-slate-400 font-body">
-                    Maksimal 200 file
+                    Maksimal 500 file
                   </p>
                 </label>
               </div>
